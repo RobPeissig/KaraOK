@@ -14,3 +14,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "KaraOK"
 include ':app'
+include ':audio-device'
+include ':LiveEffect'

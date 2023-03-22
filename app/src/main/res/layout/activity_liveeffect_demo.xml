@@ -109,6 +109,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/playback_devices_spinner" />
 
+    <Button
+        android:id="@+id/play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="play"
+        tools:layout_editor_absoluteX="500dp"
+        tools:layout_editor_absoluteY="500dp" />
+
+    <Button
+        android:id="@+id/pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="pause"
+        android:translationY="150dp"
+        tools:layout_editor_absoluteY="500dp" />
+
     <TextView
         android:id="@+id/status_view_text"
         android:layout_width="0dp"

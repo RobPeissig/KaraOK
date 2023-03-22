@@ -3,7 +3,6 @@ package com.example.karaok;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -18,7 +17,6 @@ import com.google.firebase.storage.StorageReference;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 public class LyricsDisplayActivity extends AppCompatActivity {
     private static final String TAG = "LyricsActivity";
@@ -37,8 +35,6 @@ public class LyricsDisplayActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String lrcName = "i See Fire by ed Sheeran.lrc";
-                //String lrc = LrcGetter(lrcName, getApplicationContext());
-                //LrcParser(lrc);
 
                 StorageReference storageRef = FirebaseStorage.getInstance().getReference();
                 StorageReference lrcRef = storageRef.child(lrcName);
@@ -48,6 +44,7 @@ public class LyricsDisplayActivity extends AppCompatActivity {
                     public void onSuccess(byte[] bytes) {
                         Log.d(TAG, "Success");
                         String str = new String(bytes, StandardCharsets.UTF_8);
+                        //long prevTime = 0;
                         Scanner scanner = new Scanner(str);
                         while (scanner.hasNextLine()) {
                             String line = scanner.nextLine();
@@ -60,18 +57,13 @@ public class LyricsDisplayActivity extends AppCompatActivity {
                             String lyrics = line.substring(10);
                             Log.d(TAG, String.valueOf(milliTime));
                             Log.d(TAG, lyrics);
-                            //lyricsTextView.setText("lyrics");
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
                                     lyricsTextView.setText(lyrics);
                                 }
                             }, milliTime);
-//                            try {
-//                                TimeUnit.MILLISECONDS.sleep(milliTime);
-//                            } catch (InterruptedException e) {
-//                                Log.d(TAG, "InterruptEX: " + e);
-//                            }
+                            //prevTime = milliTime;
                         }
                         scanner.close();
                     }
@@ -84,60 +76,6 @@ public class LyricsDisplayActivity extends AppCompatActivity {
             }
         });
     }
-
-//    public void LrcParser(String lrc) {
-//        Scanner scanner = new Scanner(lrc);
-//        Log.d(TAG, "Parse");
-//        //Log.d(TAG, lrc);
-//        while (scanner.hasNextLine()) {
-//            String line = scanner.nextLine();
-//            // process the line
-//            if (!line.startsWith("[0")) {
-//                continue;
-//            }
-//            String time = line.substring(1,9);
-//            long milliTime = getMilli(time);
-//            String lyrics = line.substring(10);
-//            Log.d(TAG, String.valueOf(milliTime));
-//            Log.d(TAG, lyrics);
-//            mainHandler.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    lyricsTextView.setText("lyrics");
-//                }
-//            });
-//            try {
-//                TimeUnit.MILLISECONDS.sleep(milliTime);
-//            } catch (InterruptedException e) {
-//                Log.d(TAG, "InterruptEX: " + e);
-//            }
-//        }
-//        scanner.close();
-//    }
-//
-//    public String LrcGetter(String lrcName, Context context) {
-//        StringBuilder sb = new StringBuilder();
-//        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-//        StorageReference lrcRef = storageRef.child(lrcName);
-//        final long ONE_MEGABYTE = 2229 * 3150;
-//        lrcRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-//            @Override
-//            public void onSuccess(byte[] bytes) {
-//                Log.d(TAG, "Success");
-//                String str = new String(bytes, StandardCharsets.UTF_8);
-//                //Log.d(TAG, str);
-//                sb.append(str);
-//                LrcParser(str);
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//                Log.d(TAG, "Failed");
-//            }
-//        });
-//        Log.d(TAG, "Exit Getter");
-//        return sb.toString();
-//    }
 
     public long getMilli(String time) {
         long milliTime = 0;

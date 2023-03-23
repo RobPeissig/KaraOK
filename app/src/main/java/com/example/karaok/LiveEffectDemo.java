@@ -20,6 +20,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -54,12 +55,13 @@ public class LiveEffectDemo extends Activity
 
     private int apiSelection = OBOE_API_AAUDIO;
     private boolean mAAudioRecommended = true;
-
+    //Addition of Media Player here
+    private MediaPlayer mp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_liveeffect_demo);
-
+        mp = MediaPlayer.create(this,R.raw.audio);
         statusText = findViewById(R.id.status_view_text);
         toggleEffectButton = findViewById(R.id.button_toggle_effect);
         toggleEffectButton.setOnClickListener(new View.OnClickListener() {
@@ -182,6 +184,7 @@ public class LiveEffectDemo extends Activity
 
         boolean success = LiveEffectEngine.setEffectOn(true);
         if (success) {
+            mp.start();
             statusText.setText(R.string.status_playing);
             toggleEffectButton.setText(R.string.stop_effect);
             isPlaying = true;
@@ -199,6 +202,7 @@ public class LiveEffectDemo extends Activity
         toggleEffectButton.setText(R.string.start_effect);
         isPlaying = false;
         EnableAudioApiUI(true);
+        mp.pause();
     }
 
     private void setSpinnersEnabled(boolean isEnabled){

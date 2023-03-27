@@ -86,8 +86,14 @@ public class LyricsDisplayActivity extends AppCompatActivity {
                         try {
                             MediaPlayer player = new MediaPlayer();
                             player.setDataSource("https://firebasestorage.googleapis.com/v0/b/karaok-a4389.appspot.com/o/Ed%20Sheeran%20I%20See%20Fire%20Lyrics.mp3?alt=media&token=0f4bb7e1-c98d-4f6f-b358-7fcda6073531");
+                            player.setOnPreparedListener(new MediaPlayer.OnPreparedListener(){
+                                @Override
+                                public void onPrepared(MediaPlayer mp) {
+                                    mp.start();
+                                }
+                            });
                             player.prepare();
-                            player.start();
+
                         } catch (Exception e) {
                             // TODO: handle exception
                         }

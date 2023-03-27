@@ -30,6 +30,7 @@ public class LyricsDisplayActivity extends AppCompatActivity {
     Button button_display_lyrics;
     TextView lyricsTextView;
     TextView lyricsPreView;
+    MediaPlayer mp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +48,8 @@ public class LyricsDisplayActivity extends AppCompatActivity {
                 StorageReference lrcRef = storageRef.child(lrcName);
                 StorageReference mpRef = storageRef.child(mpName);
                 final long ONE_MEGABYTE = 2229 * 3150;
-                /*final long ON_MEGABYTE = 1024 * 1024;
+                final long ON_MEGABYTE = 1024 * 1024;
+                //****Use mpRef if linking does not work correctly******
                 mpRef.getBytes(ON_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override
                     public void onSuccess(byte[] bytes) {
@@ -75,7 +77,7 @@ public class LyricsDisplayActivity extends AppCompatActivity {
                     public void onFailure(@NonNull Exception exception) {
                         // Handle any errors
                     }
-                });*/
+                });
                 lrcRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override
                     public void onSuccess(byte[] bytes) {

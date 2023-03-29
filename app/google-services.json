@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "888547889487",
+    "project_id": "karaok-a4389",
+    "storage_bucket": "karaok-a4389.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:888547889487:android:8ef3b338fd855d45c3f53a",
+        "android_client_info": {
+          "package_name": "com.example.karaok"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "888547889487-1duflbqo9ufstj2gjuckpe2urgglovd6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDooB_xETNGIMGHInyo3p7l6zhP0lcIpYU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "888547889487-1duflbqo9ufstj2gjuckpe2urgglovd6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

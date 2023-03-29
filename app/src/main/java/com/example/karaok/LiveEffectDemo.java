@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.oboe.samples.audio_device.AudioDeviceListEntry;
 import com.google.oboe.samples.audio_device.AudioDeviceSpinner;
@@ -57,11 +58,15 @@ public class LiveEffectDemo extends Activity
     private boolean mAAudioRecommended = true;
     //Addition of Media Player here
     private MediaPlayer mp;
+    private static final int RECORD_REQUEST_CODE = 101;
+    private AudioRecorder audioRecorder;
+    private boolean isRecording = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_liveeffect_demo);
         mp = MediaPlayer.create(this,R.raw.audio);
+        audioRecorder = new AudioRecorder();
         statusText = findViewById(R.id.status_view_text);
         toggleEffectButton = findViewById(R.id.button_toggle_effect);
         toggleEffectButton.setOnClickListener(new View.OnClickListener() {
@@ -185,6 +190,7 @@ public class LiveEffectDemo extends Activity
         boolean success = LiveEffectEngine.setEffectOn(true);
         if (success) {
             mp.start();
+            startRecording();
             statusText.setText(R.string.status_playing);
             toggleEffectButton.setText(R.string.stop_effect);
             isPlaying = true;
@@ -203,6 +209,23 @@ public class LiveEffectDemo extends Activity
         isPlaying = false;
         EnableAudioApiUI(true);
         mp.pause();
+        stopRecording();
+    }
+
+    private void startRecording() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, RECORD_REQUEST_CODE);
+        } else {
+            audioRecorder.startRecording();
+            isRecording = true;
+//            recordButton.setText(R.string.stop_recording);
+        }
+    }
+
+    private void stopRecording() {
+        audioRecorder.stopRecording();
+        isRecording = false;
+//        recordButton.setText(R.string.start_recording);
     }
 
     private void setSpinnersEnabled(boolean isEnabled){
@@ -244,6 +267,13 @@ public class LiveEffectDemo extends Activity
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
 
+        if (requestCode == RECORD_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startRecording();
+            } else {
+                statusText.setText(R.string.status_record_audio_denied);
+            }
+        }
         if (AUDIO_EFFECT_REQUEST != requestCode) {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
             return;

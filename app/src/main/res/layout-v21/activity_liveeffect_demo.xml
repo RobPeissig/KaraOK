@@ -112,14 +112,24 @@
         app:layout_constraintTop_toBottomOf="@+id/playback_devices_spinner" />
 
     <TextView
-        android:id="@+id/status_view_text"
+        android:id="@+id/ld1"
         android:layout_width="0dp"
-        android:layout_height="60dp"
+        android:layout_height="300dp"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:layout_marginTop="@dimen/activity_vertical_group_margin"
-        android:lines="6"
-        android:text="@string/status_warning"
+        android:text="Lyrics Display 1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_toggle_effect"
+        app:layout_constraintBottom_toBottomOf="parent" />
+    <TextView
+        android:id="@+id/ld2"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:text="Lyrics Display 2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_toggle_effect"

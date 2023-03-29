@@ -16,13 +16,18 @@
 
 package com.example.karaok;
 
+import static android.content.ContentValues.TAG;
+
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -36,8 +41,15 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.google.oboe.samples.audio_device.AudioDeviceListEntry;
 import com.google.oboe.samples.audio_device.AudioDeviceSpinner;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
 
 
 public class LiveEffectDemo extends Activity
@@ -48,7 +60,8 @@ public class LiveEffectDemo extends Activity
     private static final int OBOE_API_AAUDIO = 0;
     private static final int OBOE_API_OPENSL_ES=1;
 
-    private TextView statusText;
+    public TextView ld1;
+    public TextView ld2;
     private Button toggleEffectButton;
     private AudioDeviceSpinner recordingDeviceSpinner;
     private AudioDeviceSpinner playbackDeviceSpinner;
@@ -57,7 +70,7 @@ public class LiveEffectDemo extends Activity
     private int apiSelection = OBOE_API_AAUDIO;
     private boolean mAAudioRecommended = true;
     //Addition of Media Player here
-    private MediaPlayer mp;
+
     private static final int RECORD_REQUEST_CODE = 101;
     private AudioRecorder audioRecorder;
     private boolean isRecording = false;
@@ -65,9 +78,12 @@ public class LiveEffectDemo extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_liveeffect_demo);
-        mp = MediaPlayer.create(this,R.raw.audio);
+//        mp = MediaPlayer.create(this,R.raw.audio);
         audioRecorder = new AudioRecorder();
-        statusText = findViewById(R.id.status_view_text);
+//        statusText = findViewById(R.id.status_view_text);
+        //OLD:: mp = MediaPlayer.create(this,R.raw.audio);
+        ld1 = findViewById(R.id.ld1);
+        ld2 = findViewById(R.id.ld2);
         toggleEffectButton = findViewById(R.id.button_toggle_effect);
         toggleEffectButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,6 +178,7 @@ public class LiveEffectDemo extends Activity
         mAAudioRecommended = LiveEffectEngine.isAAudioRecommended();
         EnableAudioApiUI(true);
         LiveEffectEngine.setAPI(apiSelection);
+        stopEffect();
     }
     @Override
     protected void onPause() {
@@ -189,14 +206,14 @@ public class LiveEffectDemo extends Activity
 
         boolean success = LiveEffectEngine.setEffectOn(true);
         if (success) {
-            mp.start();
-            startRecording();
-            statusText.setText(R.string.status_playing);
+            //OLD: mp.start();
+
             toggleEffectButton.setText(R.string.stop_effect);
             isPlaying = true;
             EnableAudioApiUI(false);
+            lyricsDisplay();
         } else {
-            statusText.setText(R.string.status_open_failed);
+            ld1.setText(R.string.status_open_failed);
             isPlaying = false;
         }
     }
@@ -208,7 +225,8 @@ public class LiveEffectDemo extends Activity
         toggleEffectButton.setText(R.string.start_effect);
         isPlaying = false;
         EnableAudioApiUI(true);
-        mp.pause();
+        //player.pause();
+        //OLD:: mp.pause();
         stopRecording();
     }
 
@@ -260,20 +278,13 @@ public class LiveEffectDemo extends Activity
     }
 
     private void resetStatusView() {
-        statusText.setText(R.string.status_warning);
+
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
 
-        if (requestCode == RECORD_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startRecording();
-            } else {
-                statusText.setText(R.string.status_record_audio_denied);
-            }
-        }
         if (AUDIO_EFFECT_REQUEST != requestCode) {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
             return;
@@ -284,7 +295,7 @@ public class LiveEffectDemo extends Activity
 
             // User denied the permission, without this we cannot record audio
             // Show a toast and update the status accordingly
-            statusText.setText(R.string.status_record_audio_denied);
+
             Toast.makeText(getApplicationContext(),
                     getString(R.string.need_record_audio_permission),
                     Toast.LENGTH_SHORT)
@@ -294,4 +305,91 @@ public class LiveEffectDemo extends Activity
             toggleEffect();
         }
     }
+
+    public void lyricsDisplay(){
+        String lrcName = "i See Fire by ed Sheeran.lrc";
+        String mpName = "Ed Sheeran I See Fire Lyrics.mp3";
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference lrcRef = storageRef.child(lrcName);
+        final long ONE_MEGABYTE = 2229 * 3150;
+        lrcRef.getBytes(ONE_MEGABYTE*100).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Log.d(TAG, "Success");
+                String str = new String(bytes, StandardCharsets.UTF_8);
+                long prevTime = 0;
+                Scanner scanner = new Scanner(str);
+                startSong(mpName);
+                while (scanner.hasNextLine()) {
+                    String line = scanner.nextLine();
+                    // process the line
+                    if (!line.startsWith("[0")) {
+                        continue;
+                    }
+                    String time = line.substring(1,9);
+                    long milliTime = getMilli(time);
+                    String lyrics = line.substring(10);
+                    Log.d(TAG, String.valueOf(milliTime));
+                    Log.d(TAG, lyrics);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            ld1.setText(lyrics);
+                        }
+                    }, milliTime);
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            ld2.setText(lyrics);
+                        }
+                    }, prevTime);
+                    prevTime = milliTime;
+                }
+                scanner.close();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Failed");
+            }
+        });
+    }
+    public void startSong(String mp3Name){
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference mpRef = storageRef.child(mp3Name);
+
+        mpRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>(){
+
+            @Override
+            public void onSuccess(Uri downloadUrl){
+                MediaPlayer player = new MediaPlayer();
+                try {
+                    player.setDataSource(downloadUrl.toString());
+                    player.setOnPreparedListener(new MediaPlayer.OnPreparedListener(){
+                        @Override
+                        public void onPrepared(MediaPlayer mp) {
+                            mp.start();
+                        }
+                    });
+                    player.prepare();
+
+                } catch (Exception e) {
+                    Log.d(TAG,"SongStartFailed");
+                }
+
+            }
+        });
+    }
+
+    public long getMilli(String time) {
+        long milliTime = 0;
+        milliTime += Long.parseLong(time.substring(0,2)) * 60000;
+        milliTime += Long.parseLong(time.substring(3,5)) * 1000;
+        milliTime += Long.parseLong(time.substring(6,8));
+        return milliTime;
+    }
+
+
+
 }

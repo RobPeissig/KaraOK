@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -67,7 +68,7 @@ public class LiveEffectDemo extends Activity
 
     private int apiSelection = OBOE_API_AAUDIO;
     private boolean mAAudioRecommended = true;
-    private MediaPlayer player = new MediaPlayer();
+
     //Addition of Media Player here
     //OLD:: private MediaPlayer mp;
     @Override
@@ -218,7 +219,7 @@ public class LiveEffectDemo extends Activity
         toggleEffectButton.setText(R.string.start_effect);
         isPlaying = false;
         EnableAudioApiUI(true);
-        player.pause();
+        //player.pause();
         //OLD:: mp.pause();
     }
 
@@ -287,7 +288,6 @@ public class LiveEffectDemo extends Activity
         String mpName = "Ed Sheeran I See Fire Lyrics.mp3";
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         StorageReference lrcRef = storageRef.child(lrcName);
-        StorageReference mpRef = storageRef.child(mpName);
         final long ONE_MEGABYTE = 2229 * 3150;
         lrcRef.getBytes(ONE_MEGABYTE*100).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
@@ -296,7 +296,7 @@ public class LiveEffectDemo extends Activity
                 String str = new String(bytes, StandardCharsets.UTF_8);
                 long prevTime = 0;
                 Scanner scanner = new Scanner(str);
-                startSong();
+                startSong(mpName);
                 while (scanner.hasNextLine()) {
                     String line = scanner.nextLine();
                     // process the line
@@ -332,21 +332,31 @@ public class LiveEffectDemo extends Activity
             }
         });
     }
-    public void startSong(){
-        try {
-            player.setDataSource("https://firebasestorage.googleapis.com/v0/b/karaok-a4389.appspot.com/o/Ed%20Sheeran%20I%20See%20Fire%20Lyrics.mp3?alt=media&token=0f4bb7e1-c98d-4f6f-b358-7fcda6073531");
-            player.setOnPreparedListener(new MediaPlayer.OnPreparedListener(){
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    mp.start();
-                }
-            });
-            player.prepare();
+    public void startSong(String mp3Name){
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference mpRef = storageRef.child(mp3Name);
 
-        } catch (Exception e) {
-            // TODO: handle exception
-            Log.d(TAG,"SongStartFailed");
-        }
+        mpRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>(){
+
+            @Override
+            public void onSuccess(Uri downloadUrl){
+                MediaPlayer player = new MediaPlayer();
+                try {
+                    player.setDataSource(downloadUrl.toString());
+                    player.setOnPreparedListener(new MediaPlayer.OnPreparedListener(){
+                        @Override
+                        public void onPrepared(MediaPlayer mp) {
+                            mp.start();
+                        }
+                    });
+                    player.prepare();
+
+                } catch (Exception e) {
+                    Log.d(TAG,"SongStartFailed");
+                }
+
+            }
+        });
     }
 
     public long getMilli(String time) {

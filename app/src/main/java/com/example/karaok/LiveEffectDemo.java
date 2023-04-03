@@ -148,7 +148,7 @@ public class LiveEffectDemo extends Activity
 
         LiveEffectEngine.setDefaultStreamValues(this);
     }
-
+//yes
     private void EnableAudioApiUI(boolean enable) {
         if(apiSelection == OBOE_API_AAUDIO && !mAAudioRecommended)
         {

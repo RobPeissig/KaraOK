@@ -74,6 +74,8 @@ public class LiveEffectDemo extends Activity
     private static final int RECORD_REQUEST_CODE = 101;
     private AudioRecorder audioRecorder;
     private boolean isRecording = false;
+    private MediaPlayer player;
+    private boolean curPlaying;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,7 +126,6 @@ public class LiveEffectDemo extends Activity
                 }
             });
         }
-
         ((RadioGroup)findViewById(R.id.apiSelectionGroup)).check(R.id.aaudioButton);
         findViewById(R.id.aaudioButton).setOnClickListener(new RadioButton.OnClickListener(){
             @Override
@@ -192,6 +193,7 @@ public class LiveEffectDemo extends Activity
             stopEffect();
         } else {
             LiveEffectEngine.setAPI(apiSelection);
+            curPlaying = false;
             startEffect();
         }
     }
@@ -223,8 +225,13 @@ public class LiveEffectDemo extends Activity
         LiveEffectEngine.setEffectOn(false);
         resetStatusView();
         toggleEffectButton.setText(R.string.start_effect);
+        if(curPlaying){
+            player.pause();
+            curPlaying = true;
+        }
         isPlaying = false;
         EnableAudioApiUI(true);
+
         //player.pause();
         //OLD:: mp.pause();
         stopRecording();
@@ -323,7 +330,7 @@ public class LiveEffectDemo extends Activity
                 String str = new String(bytes, StandardCharsets.UTF_8);
                 long prevTime = 0;
                 Scanner scanner = new Scanner(str);
-                startSong(mpName);
+                curPlaying = startSong(mpName);
                 while (scanner.hasNextLine()) {
                     String line = scanner.nextLine();
                     // process the line
@@ -359,7 +366,7 @@ public class LiveEffectDemo extends Activity
             }
         });
     }
-    public void startSong(String mp3Name){
+    public boolean startSong(String mp3Name){
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         StorageReference mpRef = storageRef.child(mp3Name);
 
@@ -367,7 +374,7 @@ public class LiveEffectDemo extends Activity
 
             @Override
             public void onSuccess(Uri downloadUrl){
-                MediaPlayer player = new MediaPlayer();
+                    player = new MediaPlayer();
                 try {
                     player.setDataSource(downloadUrl.toString());
                     player.setOnPreparedListener(new MediaPlayer.OnPreparedListener(){
@@ -378,12 +385,15 @@ public class LiveEffectDemo extends Activity
                     });
                     player.prepare();
 
+
                 } catch (Exception e) {
                     Log.d(TAG,"SongStartFailed");
+
                 }
 
             }
         });
+        return true;
     }
 
     public long getMilli(String time) {

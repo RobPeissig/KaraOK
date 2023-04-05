@@ -316,7 +316,7 @@ public class LiveEffectDemo extends Activity
     }
     public boolean startSong(String mp3Name){
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-        StorageReference mpRef = storageRef.child(mp3Name);
+        StorageReference mpRef = storageRef.child("SongTitles/" + mp3Name);
 
         mpRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>(){
 

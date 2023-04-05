@@ -27,6 +27,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
@@ -59,18 +60,14 @@ public class LiveEffectDemo extends Activity
     private static final int AUDIO_EFFECT_REQUEST = 0;
     private static final int OBOE_API_AAUDIO = 0;
     private static final int OBOE_API_OPENSL_ES=1;
-
     public TextView ld1;
     public TextView ld2;
     private Button toggleEffectButton;
     private AudioDeviceSpinner recordingDeviceSpinner;
     private AudioDeviceSpinner playbackDeviceSpinner;
     private boolean isPlaying = false;
-
     private int apiSelection = OBOE_API_AAUDIO;
     private boolean mAAudioRecommended = true;
-    //Addition of Media Player here
-
     private static final int RECORD_REQUEST_CODE = 101;
     private AudioRecorder audioRecorder;
     private boolean isRecording = false;
@@ -80,13 +77,22 @@ public class LiveEffectDemo extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_liveeffect_demo);
-//        mp = MediaPlayer.create(this,R.raw.audio);
         audioRecorder = new AudioRecorder();
-//        statusText = findViewById(R.id.status_view_text);
-        //OLD:: mp = MediaPlayer.create(this,R.raw.audio);
         ld1 = findViewById(R.id.ld1);
         ld2 = findViewById(R.id.ld2);
         toggleEffectButton = findViewById(R.id.button_toggle_effect);
+        new CountDownTimer(3000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                long time = (millisUntilFinished / 1000) + 1;
+                toggleEffectButton.setText("" + time);
+            }
+
+            public void onFinish() {
+                toggleEffectButton.setClickable(true);
+                toggleEffectButton.performClick();
+                toggleEffectButton.setVisibility(View.INVISIBLE);
+            }
+        }.start();
         toggleEffectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -94,7 +100,6 @@ public class LiveEffectDemo extends Activity
             }
         });
         toggleEffectButton.setText(getString(R.string.start_effect));
-
         recordingDeviceSpinner = findViewById(R.id.recording_devices_spinner);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             recordingDeviceSpinner.setDirectionType(AudioManager.GET_DEVICES_INPUTS);
@@ -110,7 +115,6 @@ public class LiveEffectDemo extends Activity
                 }
             });
         }
-
         playbackDeviceSpinner = findViewById(R.id.playback_devices_spinner);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             playbackDeviceSpinner.setDirectionType(AudioManager.GET_DEVICES_OUTPUTS);
@@ -126,58 +130,21 @@ public class LiveEffectDemo extends Activity
                 }
             });
         }
-        ((RadioGroup)findViewById(R.id.apiSelectionGroup)).check(R.id.aaudioButton);
-        findViewById(R.id.aaudioButton).setOnClickListener(new RadioButton.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                if (((RadioButton)v).isChecked()) {
-                    apiSelection = OBOE_API_AAUDIO;
-                    setSpinnersEnabled(true);
-                }
-            }
-        });
-        findViewById(R.id.slesButton).setOnClickListener(new RadioButton.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                if (((RadioButton)v).isChecked()) {
-                    apiSelection = OBOE_API_OPENSL_ES;
-                    setSpinnersEnabled(false);
-                }
-            }
-        });
-
+        apiSelection = OBOE_API_AAUDIO;
+        setSpinnersEnabled(true);
         LiveEffectEngine.setDefaultStreamValues(this);
     }
-//yes
-    private void EnableAudioApiUI(boolean enable) {
-        if(apiSelection == OBOE_API_AAUDIO && !mAAudioRecommended)
-        {
-            apiSelection = OBOE_API_OPENSL_ES;
-        }
-        findViewById(R.id.slesButton).setEnabled(enable);
-        if(!mAAudioRecommended) {
-            findViewById(R.id.aaudioButton).setEnabled(false);
-        } else {
-            findViewById(R.id.aaudioButton).setEnabled(enable);
-        }
-
-        ((RadioGroup)findViewById(R.id.apiSelectionGroup))
-          .check(apiSelection == OBOE_API_AAUDIO ? R.id.aaudioButton : R.id.slesButton);
-        setSpinnersEnabled(enable);
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
-
     @Override
     protected void onResume() {
         super.onResume();
         LiveEffectEngine.create();
         mAAudioRecommended = LiveEffectEngine.isAAudioRecommended();
-        EnableAudioApiUI(true);
+        setSpinnersEnabled(true);
         LiveEffectEngine.setAPI(apiSelection);
         stopEffect();
     }
@@ -187,8 +154,10 @@ public class LiveEffectDemo extends Activity
         LiveEffectEngine.delete();
         super.onPause();
     }
-
     public void toggleEffect() {
+        LiveEffectEngine.create();
+        mAAudioRecommended = LiveEffectEngine.isAAudioRecommended();
+        setSpinnersEnabled(true);
         if (isPlaying) {
             stopEffect();
         } else {
@@ -197,43 +166,35 @@ public class LiveEffectDemo extends Activity
             startEffect();
         }
     }
-
     private void startEffect() {
         Log.d(TAG, "Attempting to start");
-
         if (!isRecordPermissionGranted()){
             requestRecordPermission();
             return;
         }
-
         boolean success = LiveEffectEngine.setEffectOn(true);
         if (success) {
             //OLD: mp.start();
             startRecording();
-            toggleEffectButton.setText(R.string.stop_effect);
+            //toggleEffectButton.setText(R.string.stop_effect);
             isPlaying = true;
-            EnableAudioApiUI(false);
+            setSpinnersEnabled(false);
             lyricsDisplay();
         } else {
             ld1.setText(R.string.status_open_failed);
             isPlaying = false;
         }
     }
-
     private void stopEffect() {
         Log.d(TAG, "Playing, attempting to stop");
         LiveEffectEngine.setEffectOn(false);
         resetStatusView();
-        toggleEffectButton.setText(R.string.start_effect);
         if(curPlaying){
             player.pause();
             curPlaying = true;
         }
         isPlaying = false;
-        EnableAudioApiUI(true);
-
-        //player.pause();
-        //OLD:: mp.pause();
+        setSpinnersEnabled(true);
         stopRecording();
     }
 
@@ -243,51 +204,42 @@ public class LiveEffectDemo extends Activity
         } else {
             audioRecorder.startRecording();
             isRecording = true;
-//            recordButton.setText(R.string.stop_recording);
         }
     }
 
     private void stopRecording() {
         audioRecorder.stopRecording();
         isRecording = false;
-//        recordButton.setText(R.string.start_recording);
     }
 
     private void setSpinnersEnabled(boolean isEnabled){
-        if (((RadioButton)findViewById(R.id.slesButton)).isChecked())
-        {
-            isEnabled = false;
-            playbackDeviceSpinner.setSelection(0);
-            recordingDeviceSpinner.setSelection(0);
-        }
         recordingDeviceSpinner.setEnabled(isEnabled);
         playbackDeviceSpinner.setEnabled(isEnabled);
     }
 
     private int getRecordingDeviceId(){
-        return ((AudioDeviceListEntry)recordingDeviceSpinner.getSelectedItem()).getId();
+        //always default
+        return 0;
     }
 
     private int getPlaybackDeviceId(){
-        return ((AudioDeviceListEntry)playbackDeviceSpinner.getSelectedItem()).getId();
+        //always default
+        return 0;
     }
 
     private boolean isRecordPermissionGranted() {
         return (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) ==
                 PackageManager.PERMISSION_GRANTED);
     }
-
     private void requestRecordPermission(){
         ActivityCompat.requestPermissions(
                 this,
                 new String[]{Manifest.permission.RECORD_AUDIO},
                 AUDIO_EFFECT_REQUEST);
     }
-
     private void resetStatusView() {
 
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -300,13 +252,10 @@ public class LiveEffectDemo extends Activity
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
             return;
         }
-
         if (grantResults.length != 1 ||
                 grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-
             // User denied the permission, without this we cannot record audio
             // Show a toast and update the status accordingly
-
             Toast.makeText(getApplicationContext(),
                     getString(R.string.need_record_audio_permission),
                     Toast.LENGTH_SHORT)
@@ -316,7 +265,6 @@ public class LiveEffectDemo extends Activity
             toggleEffect();
         }
     }
-
     public void lyricsDisplay(){
         String lrcName = "i See Fire by ed Sheeran.lrc";
         String mpName = "Ed Sheeran I See Fire Lyrics.mp3";
@@ -403,7 +351,4 @@ public class LiveEffectDemo extends Activity
         milliTime += Long.parseLong(time.substring(6,8));
         return milliTime;
     }
-
-
-
 }

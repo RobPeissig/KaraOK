@@ -22,50 +22,6 @@
     tools:context="com.example.karaok.LiveEffectDemo"
     tools:layout_editor_absoluteY="81dp">
 
-    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/apiSelectionGroup"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:orientation="horizontal"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/apiTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/apiSelection" />
-
-        <RadioButton
-            android:id="@+id/aaudioButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:text="@string/aaudio" />
-
-        <RadioButton
-            android:id="@+id/slesButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:text="@string/sles" />
-    </RadioGroup>
-
-    <TextView
-        android:id="@+id/recDeviceLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="@string/recording_device"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/apiSelectionGroup"/>
 
     <com.google.oboe.samples.audio_device.AudioDeviceSpinner
         android:id="@+id/recording_devices_spinner"
@@ -73,20 +29,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recDeviceLabel" />
+        app:layout_constraintTop_toTopOf="@id/button_toggle_effect"
+        android:visibility="invisible"/>
 
-    <TextView
-        android:id="@+id/playDeviceLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="@string/playback_device"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recording_devices_spinner" />
 
     <com.google.oboe.samples.audio_device.AudioDeviceSpinner
         android:id="@+id/playback_devices_spinner"
@@ -96,7 +43,8 @@
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginTop="0dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/playDeviceLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/recording_devices_spinner"
+        android:visibility="invisible"/>
 
     <Button
         android:id="@+id/button_toggle_effect"
@@ -106,6 +54,7 @@
         android:gravity="center"
         android:text="@string/start_effect"
         android:textAllCaps="false"
+        android:clickable="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.53"
         app:layout_constraintStart_toStartOf="parent"

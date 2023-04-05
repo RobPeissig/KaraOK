@@ -23,42 +23,38 @@
     tools:layout_editor_absoluteY="81dp">
 
 
+    <Button
+        android:id="@+id/button_toggle_effect"
+        android:layout_width="83dp"
+        android:layout_height="61dp"
+        android:layout_marginTop="30dp"
+        android:clickable="false"
+        android:gravity="center"
+        android:text="@string/start_effect"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playback_devices_spinner" />
+
     <com.google.oboe.samples.audio_device.AudioDeviceSpinner
         android:id="@+id/recording_devices_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginTop="16dp"
+        android:visibility="invisible"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="@id/button_toggle_effect"
-        android:visibility="invisible"/>
-
+        app:layout_constraintTop_toTopOf="@id/button_toggle_effect" />
 
     <com.google.oboe.samples.audio_device.AudioDeviceSpinner
         android:id="@+id/playback_devices_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="0dp"
+        android:visibility="invisible"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recording_devices_spinner"
-        android:visibility="invisible"/>
-
-    <Button
-        android:id="@+id/button_toggle_effect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
-        android:gravity="center"
-        android:text="@string/start_effect"
-        android:textAllCaps="false"
-        android:clickable="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.53"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/playback_devices_spinner" />
+        app:layout_constraintTop_toBottomOf="@+id/recording_devices_spinner" />
 
     <TextView
         android:id="@+id/ld1"
@@ -67,7 +63,9 @@
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:layout_marginTop="@dimen/activity_vertical_group_margin"
-        android:text="Lyrics Display 1"
+        android:text="Current Lyrics Line"
+        android:textColor="@color/teal_200"
+        android:textSize="@dimen/activity_horizontal_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_toggle_effect"
@@ -78,7 +76,9 @@
         android:layout_height="200dp"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:text="Lyrics Display 2"
+        android:text="Next Lyrics Line"
+        android:textColor="@color/teal_700"
+        android:textSize="@dimen/activity_horizontal_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_toggle_effect"

@@ -3,6 +3,7 @@ package com.example.karaok;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,33 +23,58 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
 
     private RecyclerView recyclerView;
     private SongListAdapter adapter;
-
+    private TextView textView;
     StorageReference storageRef;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_song_selection);
-
+        textView = findViewById(R.id.list);
         recyclerView = findViewById(R.id.song_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        storageRef = FirebaseStorage.getInstance().getReference().child("SongNames");
-        adapter = new SongListAdapter(getSongs());
-        adapter.setOnItemClickListener(this);
-        recyclerView.setAdapter(adapter);
+        storageRef = FirebaseStorage.getInstance().getReference("SongTitles");
+        getSongs();
+        //adapter.setOnItemClickListener(this);
+        //recyclerView.setAdapter(adapter);
     }
 
-    private List<Song> getSongs() {
-
+    private void getSongs() {
+        String[] song = new String[10];
 
         storageRef.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
-                    List<Song> songs = new ArrayList<>();
+
                     @Override
                     public void onSuccess(ListResult listResult) {
+
+                        List<Song> songs = new ArrayList<>();
+                        SongListAdapter adapter;
+                        String forContext [] = new String[20];
                         int i = 0;
                         for (StorageReference item: listResult.getItems()){
-                            Log.d("FirebaseStorage", item.getName());
+                            forContext[i] = item.getName();
+                            String[] arrOfStr = item.getName().split(" ");
+                            String name = "";
+                            String tempTitle = "";
+                            for (int j = 0; j< arrOfStr.length; j++){
+                                if(j<2){
+                                    name += arrOfStr[j] + " ";
+                                }
+                                else{
+                                    tempTitle += arrOfStr[j] + " ";
+                                }
+                            }
+                            String[] title = tempTitle.split("\\.");
+                            songs.add(new Song(title[0], name, "", 4.5f));
+                            i++;
                         }
-                        return;
+                        adapter = new SongListAdapter(songs);
+                        adapter.setOnItemClickListener(new SongListAdapter.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(int position) {
+                                switchContext(forContext[position]);
+                            }
+                        });
+                        recyclerView.setAdapter(adapter);
                     }
 
                 })
@@ -60,12 +86,12 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
                 });
 
         List<Song> songs = new ArrayList<>();
-        songs.add(new Song("Song 1", "Artist 1", "3:45", 4.5f));
+        songs.add(new Song(song[0], "Artist 1", "3:45", 4.5f));
         songs.add(new Song("Song 2", "Artist 2", "4:20", 3.5f));
         songs.add(new Song("Song 3", "Artist 3", "2:55", 5f));
         songs.add(new Song("Song 4", "Artist 4", "3:10", 2.5f));
         songs.add(new Song("Song 5", "Artist 5", "4:30", 4f));
-        return songs;
+        //return songs;
     }
 
     @Override
@@ -73,6 +99,9 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
         Intent intent = new Intent(this, LiveEffectDemo.class);
         startActivity(intent);
     }
-
-
+    public void switchContext(String songName) {
+        Intent intent = new Intent(this, LiveEffectDemo.class);
+        intent.putExtra("songName",songName);
+        startActivity(intent);
+    }
 }

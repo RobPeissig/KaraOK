@@ -73,10 +73,13 @@ public class LiveEffectDemo extends Activity
     private boolean isRecording = false;
     private MediaPlayer player;
     private boolean curPlaying;
+    String songName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_liveeffect_demo);
+        Bundle bundle = getIntent().getExtras();
+        songName= bundle.getString("songName");
         audioRecorder = new AudioRecorder();
         ld1 = findViewById(R.id.ld1);
         ld2 = findViewById(R.id.ld2);
@@ -266,10 +269,10 @@ public class LiveEffectDemo extends Activity
         }
     }
     public void lyricsDisplay(){
-        String lrcName = "i See Fire by ed Sheeran.lrc";
-        String mpName = "Ed Sheeran I See Fire Lyrics.mp3";
+        String[] lyrics = songName.split("\\.");
+        String lyricFile = lyrics[0] + ".lrc";
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-        StorageReference lrcRef = storageRef.child(lrcName);
+        StorageReference lrcRef = storageRef.child("SongLyrics/" + lyricFile);
         final long ONE_MEGABYTE = 2229 * 3150;
         lrcRef.getBytes(ONE_MEGABYTE*100).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
@@ -278,7 +281,7 @@ public class LiveEffectDemo extends Activity
                 String str = new String(bytes, StandardCharsets.UTF_8);
                 long prevTime = 0;
                 Scanner scanner = new Scanner(str);
-                curPlaying = startSong(mpName);
+                curPlaying = startSong();
                 while (scanner.hasNextLine()) {
                     String line = scanner.nextLine();
                     // process the line
@@ -314,9 +317,9 @@ public class LiveEffectDemo extends Activity
             }
         });
     }
-    public boolean startSong(String mp3Name){
+    public boolean startSong(){
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-        StorageReference mpRef = storageRef.child("SongTitles/" + mp3Name);
+        StorageReference mpRef = storageRef.child("SongTitles/" + songName);
 
         mpRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>(){
 

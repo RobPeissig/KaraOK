@@ -20,7 +20,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.karaok.LiveEffectDemo"
-    tools:layout_editor_absoluteY="81dp">
+    tools:layout_editor_absoluteY="81dp"
+    android:keepScreenOn="true">
 
 
     <Button

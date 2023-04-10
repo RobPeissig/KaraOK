@@ -14,6 +14,8 @@
         and speaker you may create a feedback loop which will not be pleasant to listen to.</string>
     <string name="recording_device">Recording device</string>
     <string name="playback_device">Playback device</string>
+    <string name="start_recording">Start Recording</string>
+    <string name="stop_recording">Stop Recording</string>
 
     <string name="apiSelection">APIs</string>
     <string name="aaudio">AAudio</string>

@@ -74,6 +74,7 @@ public class LiveEffectDemo extends Activity
     private boolean isRecording = false;
     private MediaPlayer player;
     private boolean curPlaying;
+    private Button recordButton;
     String songName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +86,18 @@ public class LiveEffectDemo extends Activity
         ld1 = findViewById(R.id.ld1);
         ld2 = findViewById(R.id.ld2);
         toggleEffectButton = findViewById(R.id.button_toggle_effect);
+        recordButton = findViewById(R.id.record_button);
+
+        recordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isRecording) {
+                    stopRecording();
+                } else {
+                    startRecording();
+                }
+            }
+        });
         new CountDownTimer(3000, 1000) {
             public void onTick(long millisUntilFinished) {
                 long time = (millisUntilFinished / 1000) + 1;
@@ -179,7 +192,7 @@ public class LiveEffectDemo extends Activity
         boolean success = LiveEffectEngine.setEffectOn(true);
         if (success) {
             //OLD: mp.start();
-            startRecording();
+//            startRecording();
             //toggleEffectButton.setText(R.string.stop_effect);
             isPlaying = true;
             setSpinnersEnabled(false);
@@ -208,14 +221,15 @@ public class LiveEffectDemo extends Activity
         } else {
             audioRecorder.startRecording();
             isRecording = true;
+            recordButton.setText(R.string.stop_recording);
         }
     }
 
     private void stopRecording() {
         audioRecorder.stopRecording();
         isRecording = false;
+        recordButton.setText(R.string.start_recording);
     }
-
     private void setSpinnersEnabled(boolean isEnabled){
         recordingDeviceSpinner.setEnabled(isEnabled);
         playbackDeviceSpinner.setEnabled(isEnabled);
@@ -248,9 +262,9 @@ public class LiveEffectDemo extends Activity
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         if (requestCode == RECORD_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startRecording();
-            }
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                startRecording();
+//            }
         }
         if (AUDIO_EFFECT_REQUEST != requestCode) {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);

@@ -88,6 +88,9 @@ public class LiveEffectDemo extends Activity
         toggleEffectButton = findViewById(R.id.button_toggle_effect);
         recordButton = findViewById(R.id.record_button);
 
+        TextView songNameTextView = findViewById(R.id.song_name_text_view);
+        songNameTextView.setText("Now playing: " + songName);
+
         recordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

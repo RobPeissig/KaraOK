@@ -20,4 +20,6 @@
     <string name="apiSelection">APIs</string>
     <string name="aaudio">AAudio</string>
     <string name="sles">OpenSL ES</string>
+    <string name="select">Select</string>
+    <string name="cancel">Cancel</string>
 </resources>

@@ -1,11 +1,15 @@
 package com.example.karaok;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +29,7 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
     private SongListAdapter adapter;
     private TextView textView;
     StorageReference storageRef;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,13 +39,9 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         storageRef = FirebaseStorage.getInstance().getReference("SongTitles");
         getSongs();
-        //adapter.setOnItemClickListener(this);
-        //recyclerView.setAdapter(adapter);
     }
 
     private void getSongs() {
-        String[] song = new String[10];
-
         storageRef.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
 
                     @Override
@@ -71,7 +72,8 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
                         adapter.setOnItemClickListener(new SongListAdapter.OnItemClickListener() {
                             @Override
                             public void onItemClick(int position) {
-                                switchContext(forContext[position]);
+                                Song song = songs.get(position);
+                                showPreviewDialog(song);
                             }
                         });
                         recyclerView.setAdapter(adapter);
@@ -84,14 +86,6 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
                         // Uh-oh, an error occurred!
                     }
                 });
-
-        List<Song> songs = new ArrayList<>();
-        songs.add(new Song(song[0], "Artist 1", "3:45", 4.5f));
-        songs.add(new Song("Song 2", "Artist 2", "4:20", 3.5f));
-        songs.add(new Song("Song 3", "Artist 3", "2:55", 5f));
-        songs.add(new Song("Song 4", "Artist 4", "3:10", 2.5f));
-        songs.add(new Song("Song 5", "Artist 5", "4:30", 4f));
-        //return songs;
     }
 
     @Override
@@ -99,9 +93,49 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
         Intent intent = new Intent(this, LiveEffectDemo.class);
         startActivity(intent);
     }
+
     public void switchContext(String songName) {
         Intent intent = new Intent(this, LiveEffectDemo.class);
         intent.putExtra("songName",songName);
         startActivity(intent);
     }
+
+    private void showPreviewDialog(Song song) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_preview, null);
+        builder.setView(view);
+
+        // Set the title of the dialog to the song name
+        TextView titleTextView = view.findViewById(R.id.dialog_preview_title);
+        titleTextView.setText(song.getName());
+
+        // Set the artist, duration and rating of the song
+        TextView artistTextView = view.findViewById(R.id.dialog_preview_artist);
+        artistTextView.setText(song.getArtist());
+
+        TextView durationTextView = view.findViewById(R.id.dialog_preview_duration);
+        durationTextView.setText(song.getDuration());
+
+        RatingBar ratingBar = view.findViewById(R.id.dialog_preview_rating);
+        ratingBar.setRating(song.getRating());
+
+        // Set the positive button to switch to the song activity
+        builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                switchContext(song.getName());
+            }
+        });
+
+        // Set the negative button to cancel the dialog
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+
+        builder.create().show();
+    }
+
 }

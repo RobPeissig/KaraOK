@@ -73,7 +73,7 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
                             @Override
                             public void onItemClick(int position) {
                                 Song song = songs.get(position);
-                                showPreviewDialog(song);
+                                showPreviewDialog(song, forContext[position]);
                             }
                         });
                         recyclerView.setAdapter(adapter);
@@ -100,7 +100,7 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
         startActivity(intent);
     }
 
-    private void showPreviewDialog(Song song) {
+    private void showPreviewDialog(Song song, String context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_preview, null);
@@ -124,7 +124,7 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
         builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                switchContext(song.getName());
+                switchContext(context);
             }
         });
 

@@ -36,6 +36,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,7 +51,10 @@ import com.google.firebase.storage.StorageReference;
 import com.google.oboe.samples.audio_device.AudioDeviceListEntry;
 import com.google.oboe.samples.audio_device.AudioDeviceSpinner;
 
+import org.w3c.dom.Text;
+
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.Scanner;
 
 
@@ -63,6 +67,7 @@ public class LiveEffectDemo extends Activity
     private static final int OBOE_API_OPENSL_ES=1;
     public TextView ld1;
     public TextView ld2;
+    public TextView timeTextView;
     private Button toggleEffectButton;
     private AudioDeviceSpinner recordingDeviceSpinner;
     private AudioDeviceSpinner playbackDeviceSpinner;
@@ -73,6 +78,9 @@ public class LiveEffectDemo extends Activity
     private AudioRecorder audioRecorder;
     private boolean isRecording = false;
     private MediaPlayer player;
+    private SeekBar seekBar;
+    private final Handler mHandler = new Handler();
+    private int mDuration;
     private boolean curPlaying;
     private Button recordButton;
     String songName;
@@ -91,6 +99,11 @@ public class LiveEffectDemo extends Activity
         TextView songNameTextView = findViewById(R.id.song_name_text_view);
         songNameTextView.setText("Now playing: " + songName);
 
+        seekBar = findViewById(R.id.seekBar);
+        mHandler.postDelayed(updateSeekBarRunnable, 1000);
+
+        timeTextView = findViewById(R.id.timeTextView);
+
         recordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,7 +114,7 @@ public class LiveEffectDemo extends Activity
                 }
             }
         });
-        new CountDownTimer(3000, 1000) {
+        new CountDownTimer(5000, 1000) {
             public void onTick(long millisUntilFinished) {
                 long time = (millisUntilFinished / 1000) + 1;
                 toggleEffectButton.setText("" + time);
@@ -150,6 +163,27 @@ public class LiveEffectDemo extends Activity
                 }
             });
         }
+        // set up the seek bar listener
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    // update the MediaPlayer position
+                    int newPosition = (int) ((progress / 100.0) * mDuration);
+                    player.seekTo(newPosition);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // no action needed
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // no action needed
+            }
+        });
         apiSelection = OBOE_API_AAUDIO;
         setSpinnersEnabled(true);
         LiveEffectEngine.setDefaultStreamValues(this);
@@ -349,6 +383,8 @@ public class LiveEffectDemo extends Activity
                     player.setOnPreparedListener(new MediaPlayer.OnPreparedListener(){
                         @Override
                         public void onPrepared(MediaPlayer mp) {
+                            mDuration = player.getDuration();
+                            seekBar.setMax(1000);
                             mp.start();
                         }
                     });
@@ -364,6 +400,35 @@ public class LiveEffectDemo extends Activity
         });
         return true;
     }
+    // define the runnable to update the seek bar
+    private final Runnable updateSeekBarRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (player != null && player.isPlaying()) {
+                System.out.println("Duration: " + mDuration);
+                int currentPosition = player.getCurrentPosition();
+                int progress = (int) (((double) currentPosition / mDuration) * 1000);
+                System.out.println("Progress: " + progress);
+                seekBar.setProgress(progress, true);
+
+                // Update current time TextView
+                int currentSeconds = currentPosition / 1000;
+                int currentMinutes = currentSeconds / 60;
+                currentSeconds = currentSeconds % 60;
+                String currentTime = String.format(Locale.getDefault(), "%d:%02d", currentMinutes, currentSeconds);
+
+                // Update total time TextView
+                int totalSeconds = mDuration / 1000;
+                int totalMinutes = totalSeconds / 60;
+                totalSeconds = totalSeconds % 60;
+                String totalTime = String.format(Locale.getDefault(), "%d:%02d", totalMinutes, totalSeconds);
+
+                String timeText = currentTime + " / " + totalTime;
+                timeTextView.setText(timeText);
+            }
+            mHandler.postDelayed(this, 1000);
+        }
+    };
 
     public long getMilli(String time) {
         long milliTime = 0;

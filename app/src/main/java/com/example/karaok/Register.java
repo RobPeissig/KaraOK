@@ -13,61 +13,54 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
-public class MainActivity extends AppCompatActivity {
+public class Register extends AppCompatActivity {
 
     TextInputEditText editTextEmail, editTextPassword;
-    MaterialButton loginbtn;
+    Button buttonReg;
     FirebaseAuth mAuth;
-    TextView forgotPassword;
+    TextView backToLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
+        setContentView(R.layout.activity_register);
         mAuth = FirebaseAuth.getInstance();
-        editTextEmail = findViewById(R.id.username_log);
-        editTextPassword = findViewById(R.id.password_log);
-
-        TextView registerAcc = (TextView) findViewById(R.id.registerAcc);
-
-        loginbtn = (MaterialButton) findViewById(R.id.loginbtn);
-
-        //admin and admin
-
-        loginbtn.setOnClickListener(new View.OnClickListener() {
+        editTextEmail = findViewById(R.id.username_reg);
+        editTextPassword = findViewById(R.id.password_reg);
+        buttonReg = findViewById(R.id.register_btn);
+        backToLogin = findViewById(R.id.back_to_login);
+        buttonReg.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 String email, password;
                 email = editTextEmail.getText().toString();
                 password = editTextPassword.getText().toString();
 
                 if(TextUtils.isEmpty(email)) {
-                    Toast.makeText(MainActivity.this, "Enter Email", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Register.this, "Enter Email", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 if(TextUtils.isEmpty(password)) {
-                    Toast.makeText(MainActivity.this, "Enter Password", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Register.this, "Enter Password", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                mAuth.signInWithEmailAndPassword(email, password)
+                mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(MainActivity.this, "Login Successful.",
+                                    Toast.makeText(Register.this, "Account Created.",
                                             Toast.LENGTH_SHORT).show();
-                                    openSongSelection();
                                 } else {
                                     // If sign in fails, display a message to the user.
-                                    Toast.makeText(MainActivity.this, "Authentication failed.",
+                                    Toast.makeText(Register.this, "Authentication failed.",
                                             Toast.LENGTH_SHORT).show();
                                 }
                             }
@@ -75,20 +68,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        registerAcc.setOnClickListener(new View.OnClickListener() {
+        backToLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openAccountRegister();
+                openMainActivity();
             }
         });
     }
-    public void openSongSelection(){
-        Intent intent = new Intent(this, SongSelection.class);
-        startActivity(intent);
-    }
 
-    public void openAccountRegister() {
-        Intent intent = new Intent(this, Register.class);
+    public void openMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 }

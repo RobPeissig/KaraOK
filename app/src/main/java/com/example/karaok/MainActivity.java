@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
         editTextPassword = findViewById(R.id.password_log);
 
         TextView registerAcc = (TextView) findViewById(R.id.registerAcc);
+        TextView forgotPass = (TextView) findViewById(R.id.forgotpass);
 
         loginbtn = (MaterialButton) findViewById(R.id.loginbtn);
 
@@ -79,6 +80,26 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 openAccountRegister();
+            }
+        });
+
+        forgotPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mAuth.sendPasswordResetEmail(editTextEmail.getText().toString()).addOnCompleteListener(
+                        new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(MainActivity.this, "Reset Email Sent.",
+                                            Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(MainActivity.this, "Reset Email Failed to Send. Please check entered email is valid.",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+                );
             }
         });
     }

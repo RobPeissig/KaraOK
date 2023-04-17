@@ -83,6 +83,7 @@ public class LiveEffectDemo extends Activity
     private SeekBar seekBar;
     private final Handler mHandler = new Handler();
     private int mDuration;
+    private VolumeMixer volumeMixer;
     private boolean curPlaying;
     private Button recordButton;
     String songName;
@@ -93,6 +94,8 @@ public class LiveEffectDemo extends Activity
         Bundle bundle = getIntent().getExtras();
         songName= bundle.getString("songName");
         audioRecorder = new AudioRecorder();
+        player = new MediaPlayer();
+        volumeMixer = new VolumeMixer(player);
         ld1 = findViewById(R.id.ld1);
         ld2 = findViewById(R.id.ld2);
         toggleEffectButton = findViewById(R.id.button_toggle_effect);
@@ -235,6 +238,9 @@ public class LiveEffectDemo extends Activity
             requestRecordPermission();
             return;
         }
+//        LiveEffectEngine.setGain(3.0f);
+        volumeMixer.setLiveEffectVolume(2.0f);
+
         boolean success = LiveEffectEngine.setEffectOn(true);
         if (success) {
             //OLD: mp.start();
@@ -386,8 +392,8 @@ public class LiveEffectDemo extends Activity
 
             @Override
             public void onSuccess(Uri downloadUrl){
-                    player = new MediaPlayer();
                 try {
+                    volumeMixer.setMusicVolume(0.5f);
                     player.setDataSource(downloadUrl.toString());
                     player.setOnPreparedListener(new MediaPlayer.OnPreparedListener(){
                         @Override

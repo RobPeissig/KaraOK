@@ -131,4 +131,17 @@ Java_com_example_karaok_LiveEffectEngine_native_1setDefaultStreamValues(JNIEnv *
     oboe::DefaultStreamValues::SampleRate = (int32_t) sampleRate;
     oboe::DefaultStreamValues::FramesPerBurst = (int32_t) framesPerBurst;
 }
+
+JNIEXPORT void JNICALL
+        Java_com_example_karaok_LiveEffectEngine_setGain(
+                JNIEnv *env, jclass, jfloat inputGain) {
+    if (engine == nullptr) {
+        LOGE(
+                "Engine is null, you must call createEngine before calling this "
+                "method");
+        return;
+    }
+    engine->setGain(inputGain);
+
+}
 } // extern "C"

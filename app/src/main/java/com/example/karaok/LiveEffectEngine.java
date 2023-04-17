@@ -35,6 +35,7 @@ public enum LiveEffectEngine {
     static native boolean setEffectOn(boolean isEffectOn);
     static native void setRecordingDeviceId(int deviceId);
     static native void setPlaybackDeviceId(int deviceId);
+    static native void setGain(float inputGain);
     static native void delete();
     static native void native_setDefaultStreamValues(int defaultSampleRate, int defaultFramesPerBurst);
 

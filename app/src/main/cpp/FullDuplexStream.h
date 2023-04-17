@@ -35,6 +35,10 @@ public:
         mOutputStream = stream;
     }
 
+    void setGain(float inputGain) {
+        gain = inputGain;
+    }
+
     virtual oboe::Result start();
 
     virtual oboe::Result stop();
@@ -49,7 +53,8 @@ public:
             int   numInputFrames,
             std::shared_ptr<oboe::AudioStream> outputStream,
             void *outputData,
-            int   numOutputFrames
+            int   numOutputFrames,
+            float gain
             ) = 0;
 
     /**
@@ -96,6 +101,8 @@ private:
 
     int32_t              mBufferSize = 0;
     std::unique_ptr<float[]> mInputBuffer;
+
+    float                gain = 1.0f;
 };
 
 

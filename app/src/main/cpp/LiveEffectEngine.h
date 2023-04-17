@@ -51,6 +51,10 @@ public:
     bool setAudioApi(oboe::AudioApi);
     bool isAAudioRecommended(void);
 
+    void setGain(float inputGain) {
+        mFullDuplexPass.setGain(inputGain);
+    }
+
 private:
     FullDuplexPass    mFullDuplexPass;
     bool              mIsEffectOn = false;

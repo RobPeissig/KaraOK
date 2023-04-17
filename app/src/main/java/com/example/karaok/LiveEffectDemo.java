@@ -34,6 +34,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
@@ -67,6 +68,7 @@ public class LiveEffectDemo extends Activity
     private static final int OBOE_API_OPENSL_ES=1;
     public TextView ld1;
     public TextView ld2;
+    public ImageView album;
     public TextView timeTextView;
     private Button toggleEffectButton;
     private AudioDeviceSpinner recordingDeviceSpinner;
@@ -103,6 +105,13 @@ public class LiveEffectDemo extends Activity
         mHandler.postDelayed(updateSeekBarRunnable, 1000);
 
         timeTextView = findViewById(R.id.timeTextView);
+
+        // Get a reference to the ImageView
+        ImageView albumCoverImageView = findViewById(R.id.album_cover_image_view);
+
+        // Set the default album cover image
+        albumCoverImageView.setImageResource(R.drawable.default_album_cover);
+
 
         recordButton.setOnClickListener(new View.OnClickListener() {
             @Override

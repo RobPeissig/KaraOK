@@ -72,7 +72,7 @@ oboe::DataCallbackResult FullDuplexStream::onAudioReady(
 
             callbackResult = onBothStreamsReady(
                     mInputStream, mInputBuffer.get(), framesRead,
-                    mOutputStream, audioData, numFrames
+                    mOutputStream, audioData, numFrames, gain
             );
         }
     }

@@ -189,6 +189,7 @@ public class LiveEffectDemo extends Activity
             requestRecordPermission();
             return;
         }
+//        LiveEffectEngine.setGain(3.0f);
         boolean success = LiveEffectEngine.setEffectOn(true);
         if (success) {
             //OLD: mp.start();

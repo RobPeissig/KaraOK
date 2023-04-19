@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.RatingBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -29,6 +32,7 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
     private SongListAdapter adapter;
     private TextView textView;
     StorageReference storageRef;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +42,23 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
         recyclerView = findViewById(R.id.song_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         storageRef = FirebaseStorage.getInstance().getReference("SongTitles");
-        getSongs();
-    }
+        getSongs("");
 
-    private void getSongs() {
+        searchView = findViewById(R.id.search_view);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String song) {
+                getSongs(song);
+                return false;
+            }
+        });
+    }
+    private void getSongs(String song) {
         storageRef.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
 
                     @Override
@@ -65,18 +82,31 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
                                 }
                             }
                             String[] title = tempTitle.split("\\.");
-                            songs.add(new Song(title[0], name, "", 4.5f));
+                            int sizeSong = song.length();
+                            if(sizeSong == 0 || (song.toLowerCase()).equals(title[0].substring(0,sizeSong).toLowerCase()) ) {
+                                songs.add(new Song(title[0], name, "", 4.5f));
+                            }
                             i++;
                         }
-                        adapter = new SongListAdapter(songs);
-                        adapter.setOnItemClickListener(new SongListAdapter.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(int position) {
-                                Song song = songs.get(position);
-                                showPreviewDialog(song, forContext[position]);
-                            }
-                        });
-                        recyclerView.setAdapter(adapter);
+                        int list = songs.size();
+                        if (list == 0){
+                            songs.add(new Song("Song Not Found", "","",0));
+                            recyclerView.setAdapter(new SongListAdapter(songs));
+                        }
+                        else {
+                            adapter = new SongListAdapter(songs);
+                            adapter.setOnItemClickListener(new SongListAdapter.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(int position) {
+                                    if (list > 0) {
+                                        Song song = songs.get(position);
+                                        showPreviewDialog(song, forContext[position]);
+                                    }
+                                }
+                            });
+
+                            recyclerView.setAdapter(adapter);
+                        }
                     }
 
                 })

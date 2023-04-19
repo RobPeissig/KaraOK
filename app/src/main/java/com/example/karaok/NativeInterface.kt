@@ -25,7 +25,7 @@ object NativeInterface {
     val effectDescriptionMap: Map<String, EffectDescription>
 
     init {
-        System.loadLibrary("native-lib")
+        System.loadLibrary("liveEffect")
         effectDescriptionMap = getEffects()
             .associateBy { it.name }
         Log.d("MAP", effectDescriptionMap.toString())

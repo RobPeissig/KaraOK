@@ -16,6 +16,12 @@
 cmake_minimum_required(VERSION 3.4.1)
 project(liveEffect LANGUAGES C CXX)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+link_directories(${CMAKE_CURRENT_LIST_DIR}/..)
+
 get_filename_component(SAMPLE_ROOT_DIR
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../.. ABSOLUTE)
 
@@ -31,7 +37,10 @@ add_library(liveEffect
         LiveEffectEngine.cpp
         FullDuplexStream.cpp
         jni_bridge.cpp
-        ${SAMPLE_ROOT_DIR}/debug-utils/trace.cpp)
+        ${SAMPLE_ROOT_DIR}/debug-utils/trace.cpp
+        native-lib.cpp
+        DuplexEngine.cpp
+        )
 target_include_directories(liveEffect
     PRIVATE
         ${SAMPLE_ROOT_DIR}/debug-utils

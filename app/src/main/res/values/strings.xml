@@ -17,6 +17,8 @@
     <string name="start_recording">Start Recording</string>
     <string name="stop_recording">Stop Recording</string>
 
+    <string name="action_toggle_mute">Toggle volume</string>
+
     <string name="apiSelection">APIs</string>
     <string name="aaudio">AAudio</string>
     <string name="sles">OpenSL ES</string>

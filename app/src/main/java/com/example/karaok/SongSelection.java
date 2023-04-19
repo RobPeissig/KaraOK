@@ -3,6 +3,8 @@ package com.example.karaok;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -25,6 +27,7 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
     private SongListAdapter adapter;
     private TextView textView;
     StorageReference storageRef;
+    private Button fxlabButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,9 +36,22 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
         recyclerView = findViewById(R.id.song_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         storageRef = FirebaseStorage.getInstance().getReference("SongTitles");
+        fxlabButton = findViewById(R.id.fxlab);
         getSongs();
+
+        fxlabButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openFxlab();
+            }
+        });
         //adapter.setOnItemClickListener(this);
         //recyclerView.setAdapter(adapter);
+    }
+
+    public void openFxlab(){
+        Intent intent = new Intent(this, FXMainActivity.class);
+        startActivity(intent);
     }
 
     private void getSongs() {

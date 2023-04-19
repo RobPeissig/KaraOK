@@ -22,6 +22,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -31,6 +33,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -101,19 +104,39 @@ public class LiveEffectDemo extends Activity
         toggleEffectButton = findViewById(R.id.button_toggle_effect);
         recordButton = findViewById(R.id.record_button);
 
-        TextView songNameTextView = findViewById(R.id.song_name_text_view);
-        songNameTextView.setText("Now playing: " + songName);
-
         seekBar = findViewById(R.id.seekBar);
-        mHandler.postDelayed(updateSeekBarRunnable, 1000);
 
+        mHandler.postDelayed(updateSeekBarRunnable, 1000);
         timeTextView = findViewById(R.id.timeTextView);
 
+        seekBar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return true;
+            }
+        });
         // Get a reference to the ImageView
         ImageView albumCoverImageView = findViewById(R.id.album_cover_image_view);
-
+        String[] albums = songName.split("\\.");
+        String albumFile = albums[0] + ".png";
+        TextView songNameTextView = findViewById(R.id.song_name_text_view);
+        songNameTextView.setText("Now playing: " + albums[0]);
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference jpgRef = storageRef.child("SongCover/" + albumFile);
+        final long ONE_MEGABYTE = 2000 * 1024;
         // Set the default album cover image
-        albumCoverImageView.setImageResource(R.drawable.default_album_cover);
+        jpgRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                albumCoverImageView.setImageBitmap(bmp);
+                }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
 
 
         recordButton.setOnClickListener(new View.OnClickListener() {
@@ -425,7 +448,6 @@ public class LiveEffectDemo extends Activity
                 int progress = (int) (((double) currentPosition / mDuration) * 1000);
                 System.out.println("Progress: " + progress);
                 seekBar.setProgress(progress, true);
-
                 // Update current time TextView
                 int currentSeconds = currentPosition / 1000;
                 int currentMinutes = currentSeconds / 60;

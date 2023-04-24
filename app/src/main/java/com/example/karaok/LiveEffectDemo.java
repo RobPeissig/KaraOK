@@ -16,8 +16,6 @@
 
 package com.example.karaok;
 
-import static android.content.ContentValues.TAG;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
@@ -31,15 +29,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,10 +47,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.oboe.samples.audio_device.AudioDeviceListEntry;
 import com.google.oboe.samples.audio_device.AudioDeviceSpinner;
-
-import org.w3c.dom.Text;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
@@ -88,7 +80,7 @@ public class LiveEffectDemo extends Activity
     private int mDuration;
     private VolumeMixer volumeMixer;
     private boolean curPlaying;
-    private Button recordButton;
+    private Button endEarly;
     String songName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,8 +94,7 @@ public class LiveEffectDemo extends Activity
         ld1 = findViewById(R.id.ld1);
         ld2 = findViewById(R.id.ld2);
         toggleEffectButton = findViewById(R.id.button_toggle_effect);
-        recordButton = findViewById(R.id.record_button);
-
+        endEarly = findViewById(R.id.endEarly);
         seekBar = findViewById(R.id.seekBar);
 
         mHandler.postDelayed(updateSeekBarRunnable, 1000);
@@ -139,26 +130,25 @@ public class LiveEffectDemo extends Activity
         });
 
 
-        recordButton.setOnClickListener(new View.OnClickListener() {
+        endEarly.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isRecording) {
-                    stopRecording();
-                } else {
-                    startRecording();
-                }
+                endScreen();
             }
         });
-        new CountDownTimer(5000, 1000) {
+        endEarly.setClickable(false);
+        endEarly.setVisibility(Button.INVISIBLE);
+        new CountDownTimer(3000, 1000) {
             public void onTick(long millisUntilFinished) {
                 long time = (millisUntilFinished / 1000) + 1;
                 toggleEffectButton.setText("" + time);
             }
-
             public void onFinish() {
                 toggleEffectButton.setClickable(true);
                 toggleEffectButton.performClick();
                 toggleEffectButton.setVisibility(View.INVISIBLE);
+                endEarly.setVisibility(View.VISIBLE);
+                endEarly.setClickable(true);
             }
         }.start();
         toggleEffectButton.setOnClickListener(new View.OnClickListener() {
@@ -296,14 +286,12 @@ public class LiveEffectDemo extends Activity
         } else {
             audioRecorder.startRecording();
             isRecording = true;
-            recordButton.setText(R.string.stop_recording);
         }
     }
 
     private void stopRecording() {
         audioRecorder.stopRecording();
         isRecording = false;
-        recordButton.setText(R.string.start_recording);
     }
     private void setSpinnersEnabled(boolean isEnabled){
         recordingDeviceSpinner.setEnabled(isEnabled);

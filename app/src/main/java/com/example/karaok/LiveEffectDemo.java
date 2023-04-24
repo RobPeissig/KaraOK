@@ -379,7 +379,7 @@ public class LiveEffectDemo extends Activity
                         continue;
                     }
                     String time = line.substring(1,9);
-                    long milliTime = getMilli(time);
+                    long milliTime = getMilli(time) + (long)1000;
                     String lyrics = line.substring(10);
                     Log.d(TAG, String.valueOf(milliTime));
                     Log.d(TAG, lyrics);
@@ -398,6 +398,7 @@ public class LiveEffectDemo extends Activity
                     }, prevTime);
                     prevTime = milliTime;
                 }
+                ld2.setText(" ");
                 scanner.close();
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -462,6 +463,9 @@ public class LiveEffectDemo extends Activity
 
                 String timeText = currentTime + " / " + totalTime;
                 timeTextView.setText(timeText);
+                if(currentMinutes == totalMinutes && currentSeconds+1 >= totalSeconds){
+                    endScreen();
+                }
             }
             mHandler.postDelayed(this, 1000);
         }
@@ -473,5 +477,10 @@ public class LiveEffectDemo extends Activity
         milliTime += Long.parseLong(time.substring(3,5)) * 1000;
         milliTime += Long.parseLong(time.substring(6,8));
         return milliTime;
+    }
+    public void endScreen(){
+        Intent intent = new Intent(this, EndScreen.class);
+        startActivity(intent);
+
     }
 }

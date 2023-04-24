@@ -166,6 +166,8 @@ public class LiveEffectDemo extends Activity
                 toggleEffectButton.setClickable(true);
                 toggleEffectButton.performClick();
                 toggleEffectButton.setVisibility(View.INVISIBLE);
+                endEarly.setVisibility(View.VISIBLE);
+                endEarly.setClickable(true);
             }
         }.start();
         toggleEffectButton.setOnClickListener(new View.OnClickListener() {

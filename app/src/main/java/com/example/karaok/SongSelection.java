@@ -89,18 +89,11 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
         });
     }
 
-    private void getSongs() {
-        String[] song = new String[10];
-
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-                openMainActivity();
-                finish();
-            }
-        });
+    public void openFxlab(){
+        Intent intent = new Intent(this, FXMainActivity.class);
+        startActivity(intent);
     }
+
     private void getSongs(String song) {
         storageRef.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
 

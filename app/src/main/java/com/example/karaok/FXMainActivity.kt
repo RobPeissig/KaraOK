@@ -98,7 +98,6 @@ class FXMainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
             handleMidiDevices()
         }
-
     }
 
     override fun onDestroy() {

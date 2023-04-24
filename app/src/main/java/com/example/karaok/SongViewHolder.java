@@ -26,7 +26,12 @@ public class SongViewHolder extends RecyclerView.ViewHolder {
         songNameTextView.setText(song.getName());
         songArtistTextView.setText(song.getArtist());
         songDurationTextView.setText(song.getDuration());
-        songRatingBar.setRating(song.getRating());
+        if(song.getRating()>0) {
+            songRatingBar.setRating(song.getRating());
+        }
+        else{
+            songRatingBar.setVisibility(RatingBar.INVISIBLE);
+        }
     }
 
     public TextView getSongNameTextView() {

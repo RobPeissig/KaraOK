@@ -22,6 +22,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -31,11 +33,14 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,8 +55,11 @@ import com.google.firebase.storage.StorageReference;
 import com.google.oboe.samples.audio_device.AudioDeviceListEntry;
 import com.google.oboe.samples.audio_device.AudioDeviceSpinner;
 
+import org.w3c.dom.Text;
+
 import java.lang.annotation.Native;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.Scanner;
 
 
@@ -64,6 +72,8 @@ public class LiveEffectDemo extends Activity
     private static final int OBOE_API_OPENSL_ES=1;
     public TextView ld1;
     public TextView ld2;
+    public ImageView album;
+    public TextView timeTextView;
     private Button toggleEffectButton;
     private AudioDeviceSpinner recordingDeviceSpinner;
     private AudioDeviceSpinner playbackDeviceSpinner;
@@ -74,6 +84,10 @@ public class LiveEffectDemo extends Activity
     private AudioRecorder audioRecorder;
     private boolean isRecording = false;
     private MediaPlayer player;
+    private SeekBar seekBar;
+    private final Handler mHandler = new Handler();
+    private int mDuration;
+    private VolumeMixer volumeMixer;
     private boolean curPlaying;
     private Button recordButton;
     String songName;
@@ -84,10 +98,47 @@ public class LiveEffectDemo extends Activity
         Bundle bundle = getIntent().getExtras();
         songName= bundle.getString("songName");
         audioRecorder = new AudioRecorder();
+        player = new MediaPlayer();
+        volumeMixer = new VolumeMixer(player);
         ld1 = findViewById(R.id.ld1);
         ld2 = findViewById(R.id.ld2);
         toggleEffectButton = findViewById(R.id.button_toggle_effect);
         recordButton = findViewById(R.id.record_button);
+
+        seekBar = findViewById(R.id.seekBar);
+
+        mHandler.postDelayed(updateSeekBarRunnable, 1000);
+        timeTextView = findViewById(R.id.timeTextView);
+
+        seekBar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return true;
+            }
+        });
+        // Get a reference to the ImageView
+        ImageView albumCoverImageView = findViewById(R.id.album_cover_image_view);
+        String[] albums = songName.split("\\.");
+        String albumFile = albums[0] + ".png";
+        TextView songNameTextView = findViewById(R.id.song_name_text_view);
+        songNameTextView.setText("Now playing: " + albums[0]);
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference jpgRef = storageRef.child("SongCover/" + albumFile);
+        final long ONE_MEGABYTE = 2000 * 1024;
+        // Set the default album cover image
+        jpgRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                albumCoverImageView.setImageBitmap(bmp);
+                }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
+
 
         recordButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,6 +199,27 @@ public class LiveEffectDemo extends Activity
                 }
             });
         }
+        // set up the seek bar listener
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    // update the MediaPlayer position
+                    int newPosition = (int) ((progress / 100.0) * mDuration);
+                    player.seekTo(newPosition);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // no action needed
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // no action needed
+            }
+        });
         apiSelection = OBOE_API_AAUDIO;
         setSpinnersEnabled(true);
         LiveEffectEngine.setDefaultStreamValues(this);
@@ -190,6 +262,9 @@ public class LiveEffectDemo extends Activity
             requestRecordPermission();
             return;
         }
+//        LiveEffectEngine.setGain(3.0f);
+        volumeMixer.setLiveEffectVolume(2.0f);
+
         boolean success = LiveEffectEngine.setEffectOn(true);
         if (success) {
             //OLD: mp.start();
@@ -324,6 +399,7 @@ public class LiveEffectDemo extends Activity
                     }, prevTime);
                     prevTime = milliTime;
                 }
+                ld2.setText(" ");
                 scanner.close();
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -341,12 +417,14 @@ public class LiveEffectDemo extends Activity
 
             @Override
             public void onSuccess(Uri downloadUrl){
-                    player = new MediaPlayer();
                 try {
+                    volumeMixer.setMusicVolume(0.5f);
                     player.setDataSource(downloadUrl.toString());
                     player.setOnPreparedListener(new MediaPlayer.OnPreparedListener(){
                         @Override
                         public void onPrepared(MediaPlayer mp) {
+                            mDuration = player.getDuration();
+                            seekBar.setMax(1000);
                             mp.start();
                         }
                     });
@@ -362,6 +440,37 @@ public class LiveEffectDemo extends Activity
         });
         return true;
     }
+    // define the runnable to update the seek bar
+    private final Runnable updateSeekBarRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (player != null && player.isPlaying()) {
+                System.out.println("Duration: " + mDuration);
+                int currentPosition = player.getCurrentPosition();
+                int progress = (int) (((double) currentPosition / mDuration) * 1000);
+                System.out.println("Progress: " + progress);
+                seekBar.setProgress(progress, true);
+                // Update current time TextView
+                int currentSeconds = currentPosition / 1000;
+                int currentMinutes = currentSeconds / 60;
+                currentSeconds = currentSeconds % 60;
+                String currentTime = String.format(Locale.getDefault(), "%d:%02d", currentMinutes, currentSeconds);
+
+                // Update total time TextView
+                int totalSeconds = mDuration / 1000;
+                int totalMinutes = totalSeconds / 60;
+                totalSeconds = totalSeconds % 60;
+                String totalTime = String.format(Locale.getDefault(), "%d:%02d", totalMinutes, totalSeconds);
+
+                String timeText = currentTime + " / " + totalTime;
+                timeTextView.setText(timeText);
+                if(currentMinutes == totalMinutes && currentSeconds+1 >= totalSeconds){
+                    endScreen();
+                }
+            }
+            mHandler.postDelayed(this, 1000);
+        }
+    };
 
     public long getMilli(String time) {
         long milliTime = 0;
@@ -369,5 +478,10 @@ public class LiveEffectDemo extends Activity
         milliTime += Long.parseLong(time.substring(3,5)) * 1000;
         milliTime += Long.parseLong(time.substring(6,8));
         return milliTime;
+    }
+    public void endScreen(){
+        Intent intent = new Intent(this, EndScreen.class);
+        startActivity(intent);
+
     }
 }

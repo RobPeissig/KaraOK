@@ -33,6 +33,9 @@
             android:name=".EndScreen"
             android:exported="false" />
         <activity
+            android:name=".Register"
+            android:exported="false" />
+        <activity
             android:name=".LyricsDisplayActivity"
             android:exported="false" />
         <activity

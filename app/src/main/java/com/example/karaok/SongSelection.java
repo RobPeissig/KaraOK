@@ -3,6 +3,9 @@ package com.example.karaok;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Adapter;
@@ -19,6 +22,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
@@ -34,10 +39,24 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
     StorageReference storageRef;
     private SearchView searchView;
 
+    FirebaseAuth auth;
+    FirebaseUser user;
+    Button logout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_song_selection);
+
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+        logout = findViewById(R.id.Logout);
+
+        if (user == null) {
+            openMainActivity();
+            finish();
+        }
+
         textView = findViewById(R.id.list);
         recyclerView = findViewById(R.id.song_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -55,6 +74,15 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
             public boolean onQueryTextChange(String song) {
                 getSongs(song);
                 return false;
+            }
+        });
+
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseAuth.getInstance().signOut();
+                openMainActivity();
+                finish();
             }
         });
     }
@@ -127,6 +155,11 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
     public void switchContext(String songName) {
         Intent intent = new Intent(this, LiveEffectDemo.class);
         intent.putExtra("songName",songName);
+        startActivity(intent);
+    }
+
+    public void openMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 

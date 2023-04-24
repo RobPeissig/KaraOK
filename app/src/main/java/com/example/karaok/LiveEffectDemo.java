@@ -166,8 +166,6 @@ public class LiveEffectDemo extends Activity
                 toggleEffectButton.setClickable(true);
                 toggleEffectButton.performClick();
                 toggleEffectButton.setVisibility(View.INVISIBLE);
-                endEarly.setVisibility(View.VISIBLE);
-                endEarly.setClickable(true);
             }
         }.start();
         toggleEffectButton.setOnClickListener(new View.OnClickListener() {
@@ -418,7 +416,8 @@ public class LiveEffectDemo extends Activity
     public boolean startSong(){
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         StorageReference mpRef = storageRef.child("SongTitles/" + songName);
-
+        endEarly.setVisibility(View.VISIBLE);
+        endEarly.setClickable(true);
         mpRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>(){
 
             @Override

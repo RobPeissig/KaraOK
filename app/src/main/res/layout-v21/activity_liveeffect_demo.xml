@@ -112,11 +112,11 @@
         app:layout_constraintTop_toBottomOf="@+id/button_toggle_effect" />
 
     <Button
-        android:id="@+id/record_button"
+        android:id="@+id/endEarly"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/start_recording"
+        android:text="@string/EndSongE"
         android:textColor="@color/white"
         android:textSize="18sp"
         app:layout_constraintHorizontal_chainStyle="packed"

@@ -43,8 +43,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,7 +55,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.oboe.samples.audio_device.AudioDeviceListEntry;
 import com.google.oboe.samples.audio_device.AudioDeviceSpinner;
 
 import org.w3c.dom.Text;
@@ -97,13 +94,8 @@ public class LiveEffectDemo extends Activity
     private int mDuration;
     private VolumeMixer volumeMixer;
     private boolean curPlaying;
-    private Button recordButton;
-    private String songName;
-    private File mLastFile;
-    private int mProcessing = 0;
-    private AudioTrack mAudioTrack = null;
-    private int mBufferSize = 0;
-    private int songMode;
+    private Button endEarly;
+    String songName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,8 +109,7 @@ public class LiveEffectDemo extends Activity
         ld1 = findViewById(R.id.ld1);
         ld2 = findViewById(R.id.ld2);
         toggleEffectButton = findViewById(R.id.button_toggle_effect);
-        recordButton = findViewById(R.id.record_button);
-
+        endEarly = findViewById(R.id.endEarly);
         seekBar = findViewById(R.id.seekBar);
 
         mHandler.postDelayed(updateSeekBarRunnable, 1000);
@@ -157,32 +148,32 @@ public class LiveEffectDemo extends Activity
             }
         });
 
-        recordButton.setOnClickListener(new View.OnClickListener() {
+
+        endEarly.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isRecording) {
-                    stopRecording();
-                } else {
-                    startRecording();
-                }
+                endScreen();
             }
         });
+        endEarly.setClickable(false);
+        endEarly.setVisibility(Button.INVISIBLE);
         new CountDownTimer(3000, 1000) {
             public void onTick(long millisUntilFinished) {
                 long time = (millisUntilFinished / 1000) + 1;
                 toggleEffectButton.setText("" + time);
             }
-
             public void onFinish() {
                 toggleEffectButton.setClickable(true);
                 toggleEffectButton.performClick();
                 toggleEffectButton.setVisibility(View.INVISIBLE);
+                endEarly.setVisibility(View.VISIBLE);
+                endEarly.setClickable(true);
             }
         }.start();
         toggleEffectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                toggleEffect();                     //Need to change to NativeInterface
+                toggleEffect();
             }
         });
         toggleEffectButton.setText(getString(R.string.start_effect));
@@ -192,7 +183,7 @@ public class LiveEffectDemo extends Activity
             recordingDeviceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                    //LiveEffectEngine.setRecordingDeviceId(getRecordingDeviceId());
+                    LiveEffectEngine.setRecordingDeviceId(getRecordingDeviceId());
                 }
 
                 @Override
@@ -239,10 +230,8 @@ public class LiveEffectDemo extends Activity
         });
         apiSelection = OBOE_API_AAUDIO;
         setSpinnersEnabled(true);
-        //LiveEffectEngine.setDefaultStreamValues(this);        //TODO:Changed
+        LiveEffectEngine.setDefaultStreamValues(this);
     }
-
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -251,30 +240,26 @@ public class LiveEffectDemo extends Activity
     @Override
     protected void onResume() {
         super.onResume();
-        //NativeInterface.INSTANCE.createAudioEngine();
-        NativeInterface.INSTANCE.enable(true);
-        //LiveEffectEngine.create();
-        //mAAudioRecommended = LiveEffectEngine.isAAudioRecommended();
+        LiveEffectEngine.create();
+        mAAudioRecommended = LiveEffectEngine.isAAudioRecommended();
         setSpinnersEnabled(true);
-        //LiveEffectEngine.setAPI(apiSelection);
+        LiveEffectEngine.setAPI(apiSelection);
         stopEffect();
     }
     @Override
     protected void onPause() {
         stopEffect();
-        //NativeInterface.INSTANCE.destroyAudioEngine();
-        NativeInterface.INSTANCE.enable(false);
-        //LiveEffectEngine.delete();
+        LiveEffectEngine.delete();
         super.onPause();
     }
     public void toggleEffect() {
-        //LiveEffectEngine.create();
-        //mAAudioRecommended = LiveEffectEngine.isAAudioRecommended();
+        LiveEffectEngine.create();
+        mAAudioRecommended = LiveEffectEngine.isAAudioRecommended();
         setSpinnersEnabled(true);
         if (isPlaying) {
             stopEffect();
         } else {
-            //LiveEffectEngine.setAPI(apiSelection);
+            LiveEffectEngine.setAPI(apiSelection);
             curPlaying = false;
             startEffect();
         }
@@ -285,13 +270,13 @@ public class LiveEffectDemo extends Activity
             requestRecordPermission();
             return;
         }
+//        LiveEffectEngine.setGain(3.0f);
         volumeMixer.setLiveEffectVolume(2.0f);
 
-        boolean success = LiveEffectEngine.setEffectOn(false);   //TODO:Changed
-        success = true;
+        boolean success = LiveEffectEngine.setEffectOn(true);
         if (success) {
             //OLD: mp.start();
-            startRecording();
+//            startRecording();
             //toggleEffectButton.setText(R.string.stop_effect);
             isPlaying = true;
             setSpinnersEnabled(false);
@@ -303,7 +288,7 @@ public class LiveEffectDemo extends Activity
     }
     private void stopEffect() {
         Log.d(TAG, "Playing, attempting to stop");
-        //LiveEffectEngine.setEffectOn(false);
+        LiveEffectEngine.setEffectOn(false);
         resetStatusView();
         if(curPlaying){
             player.pause();
@@ -320,14 +305,12 @@ public class LiveEffectDemo extends Activity
         } else {
             audioRecorder.startRecording();
             isRecording = true;
-            recordButton.setText(R.string.stop_recording);
         }
     }
 
     private void stopRecording() {
         audioRecorder.stopRecording();
         isRecording = false;
-        recordButton.setText(R.string.start_recording);
     }
     private void setSpinnersEnabled(boolean isEnabled){
         recordingDeviceSpinner.setEnabled(isEnabled);
@@ -361,6 +344,9 @@ public class LiveEffectDemo extends Activity
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         if (requestCode == RECORD_REQUEST_CODE) {
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                startRecording();
+//            }
         }
         if (AUDIO_EFFECT_REQUEST != requestCode) {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -376,7 +362,7 @@ public class LiveEffectDemo extends Activity
                     .show();
         } else {
             // Permission was granted, start live effect
-            toggleEffect();                                         //TODO:changed
+            toggleEffect();
         }
     }
     public void lyricsDisplay(){
@@ -400,7 +386,7 @@ public class LiveEffectDemo extends Activity
                         continue;
                     }
                     String time = line.substring(1,9);
-                    long milliTime = getMilli(time);
+                    long milliTime = getMilli(time) + (long)1000;
                     String lyrics = line.substring(10);
                     Log.d(TAG, String.valueOf(milliTime));
                     Log.d(TAG, lyrics);

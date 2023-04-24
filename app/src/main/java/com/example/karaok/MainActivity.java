@@ -22,7 +22,6 @@ public class MainActivity extends AppCompatActivity {
     TextInputEditText editTextEmail, editTextPassword;
     MaterialButton loginbtn;
     FirebaseAuth mAuth;
-    TextView forgotPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

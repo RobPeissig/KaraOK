@@ -154,7 +154,7 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
         builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                switchContext(context);
+                switchContext(song.getArtist() + song.getName() + ".mp3");
             }
         });
 

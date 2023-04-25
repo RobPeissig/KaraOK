@@ -18,14 +18,12 @@ public class SongViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         songNameTextView = itemView.findViewById(R.id.song_name);
         songArtistTextView = itemView.findViewById(R.id.song_artist);
-        songDurationTextView = itemView.findViewById(R.id.song_duration);
         songRatingBar = itemView.findViewById(R.id.song_rating);
     }
 
     public void bind(Song song) {
         songNameTextView.setText(song.getName());
         songArtistTextView.setText(song.getArtist());
-        songDurationTextView.setText(song.getDuration());
         if(song.getRating()>0) {
             songRatingBar.setRating(song.getRating());
         }

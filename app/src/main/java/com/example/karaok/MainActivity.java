@@ -110,4 +110,11 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, Register.class);
         startActivity(intent);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        NativeInterface.INSTANCE.createAudioEngine();
+        NativeInterface.INSTANCE.enable(false);
+    }
 }

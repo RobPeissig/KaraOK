@@ -233,7 +233,7 @@ public class LiveEffectDemo extends Activity
     @Override
     protected void onResume() {
         super.onResume();
-        NativeInterface.INSTANCE.createAudioEngine();
+        //NativeInterface.INSTANCE.createAudioEngine();
         NativeInterface.INSTANCE.enable(true);
         //LiveEffectEngine.create();
         //mAAudioRecommended = LiveEffectEngine.isAAudioRecommended();
@@ -244,7 +244,8 @@ public class LiveEffectDemo extends Activity
     @Override
     protected void onPause() {
         stopEffect();
-        NativeInterface.INSTANCE.destroyAudioEngine();
+        //NativeInterface.INSTANCE.destroyAudioEngine();
+        NativeInterface.INSTANCE.enable(false);
         //LiveEffectEngine.delete();
         super.onPause();
     }

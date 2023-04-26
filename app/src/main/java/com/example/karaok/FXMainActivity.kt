@@ -109,7 +109,7 @@ class FXMainActivity : AppCompatActivity() {
 
     override fun onPause() {
         // Shutdown Engine
-        NativeInterface.destroyAudioEngine()
+        //NativeInterface.destroyAudioEngine()
         super.onPause()
     }
 
@@ -119,7 +119,7 @@ class FXMainActivity : AppCompatActivity() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
             == PackageManager.PERMISSION_GRANTED
         ) {
-            NativeInterface.createAudioEngine()
+            //NativeInterface.createAudioEngine()
             NativeInterface.enable(isAudioEnabled)
         }
     }
@@ -133,7 +133,7 @@ class FXMainActivity : AppCompatActivity() {
         when (requestCode) {
             MY_PERMISSIONS_RECORD_AUDIO -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    NativeInterface.createAudioEngine()
+                    //NativeInterface.createAudioEngine()
                 } else {
                     val builder = AlertDialog.Builder(this).apply {
                         setMessage(

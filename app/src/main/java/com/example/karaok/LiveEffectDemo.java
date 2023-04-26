@@ -272,6 +272,9 @@ public class LiveEffectDemo extends Activity
         boolean success = LiveEffectEngine.setEffectOn(false);   //TODO:Changed
         success = true;
         if (success) {
+            //OLD: mp.start();
+            startRecording();
+            //toggleEffectButton.setText(R.string.stop_effect);
             isPlaying = true;
             setSpinnersEnabled(false);
             lyricsDisplay();

@@ -139,16 +139,6 @@ public class LiveEffectDemo extends Activity
         });
 
 
-        recordButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isRecording) {
-                    stopRecording();
-                } else {
-                    startRecording();
-                }
-            }
-        });
         new CountDownTimer(5000, 1000) {
             public void onTick(long millisUntilFinished) {
                 long time = (millisUntilFinished / 1000) + 1;
@@ -267,7 +257,7 @@ public class LiveEffectDemo extends Activity
         boolean success = LiveEffectEngine.setEffectOn(true);
         if (success) {
             //OLD: mp.start();
-//            startRecording();
+            startRecording();
             //toggleEffectButton.setText(R.string.stop_effect);
             isPlaying = true;
             setSpinnersEnabled(false);

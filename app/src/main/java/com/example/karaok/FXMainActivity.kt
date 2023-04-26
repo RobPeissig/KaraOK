@@ -110,6 +110,7 @@ class FXMainActivity : AppCompatActivity() {
     override fun onPause() {
         // Shutdown Engine
         //NativeInterface.destroyAudioEngine()
+        NativeInterface.enable(false)
         super.onPause()
     }
 

@@ -109,8 +109,12 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
                             String[] arrOfStr = item.getName().split(" ");
                             String name = "";
                             String tempTitle = "";
+                            Boolean titleStart = false;
                             for (int j = 0; j< arrOfStr.length; j++){
-                                if(j<2){
+                                if(arrOfStr[j].equals("-")){
+                                    titleStart = true;
+                                }
+                                else if(titleStart == false){
                                     name += arrOfStr[j] + " ";
                                 }
                                 else{
@@ -195,7 +199,7 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
         builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                switchContext(song.getArtist() + song.getName() + ".mp3");
+                switchContext(song.getArtist()+ "- " + song.getName() + ".mp3");
             }
         });
 

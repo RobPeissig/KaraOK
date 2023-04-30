@@ -77,4 +77,43 @@ public class FFmpegAPI {
         }
     }
 
+    public static String getDefaultAudioOutputFileExtension(String audioCodec) {
+
+        String extension;
+        switch (audioCodec) {
+            case "mp2 (twolame)":
+                extension = "mpg";
+                break;
+            case "mp3 (liblame)":
+            case "mp3 (libshine)":
+                extension = "mp3";
+                break;
+            case "vorbis":
+                extension = "ogg";
+                break;
+            case "opus":
+                extension = "opus";
+                break;
+            case "amr-nb":
+            case "amr-wb":
+                extension = "amr";
+                break;
+            case "ilbc":
+                extension = "lbc";
+                break;
+            case "speex":
+                extension = "spx";
+                break;
+            case "wavpack":
+                extension = "wv";
+                break;
+            default:
+
+                // soxr
+                extension = "wav";
+                break;
+        }
+        return extension;
+    }
+
 }

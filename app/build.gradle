@@ -79,4 +79,6 @@ dependencies {
     androidTestImplementation "androidx.test:rules:1.5.0"
     androidTestImplementation "androidx.test.ext:truth:1.5.0"
     androidTestImplementation "androidx.test:core:1.5.0"
+
+    implementation files('libs/ttvspleeter.aar')
 }

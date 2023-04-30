@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String TAG = MainActivity.class.getName();
     TextInputEditText editTextEmail, editTextPassword;
     MaterialButton loginbtn;
     FirebaseAuth mAuth;

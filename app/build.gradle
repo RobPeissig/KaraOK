@@ -71,4 +71,6 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.1.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'com.google.firebase:firebase-auth:21.2.0'
+
+    implementation 'com.arthenica:ffmpeg-kit-full:5.1'
 }

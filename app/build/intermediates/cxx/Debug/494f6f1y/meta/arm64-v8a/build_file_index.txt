@@ -1,1 +1,0 @@
-C:\Users\robbi\AndroidStudioProjects\KaraOK\app\src\main\cpp\CMakeLists.txt

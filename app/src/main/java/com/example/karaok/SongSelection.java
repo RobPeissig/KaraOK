@@ -1,10 +1,13 @@
 package com.example.karaok;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.view.LayoutInflater;
@@ -18,9 +21,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.arthenica.ffmpegkit.FFmpegKit;
+import com.arthenica.ffmpegkit.ReturnCode;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -41,6 +48,7 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
     private TextView textView;
     StorageReference storageRef;
     private Button fxlabButton;
+    public static String fullSongName;
     private SearchView searchView;
 
     private Context context;
@@ -145,6 +153,9 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
                                     if (list > 0) {
                                         Song song = songs.get(position);
                                         showPreviewDialog(song, forContext[position]);
+                                        fullSongName = song.getArtist() + "- " + song.getName();
+                                        Log.d("Song", fullSongName);
+                                        downloadMp3FromFirebase(fullSongName);
                                     }
                                 }
                             });
@@ -271,5 +282,78 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
 
         builder.create().show();
     }
+    private void downloadMp3FromFirebase(String songName) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+        StorageReference songRef = storageRef.child("SongTitles/" + songName + ".mp3");
 
+        File musicDirectory = new File(Environment.getExternalStorageDirectory(), "Download");
+        if (!musicDirectory.exists()) {
+            musicDirectory.mkdirs();
+        }
+
+        File localFile = new File(musicDirectory, songName + ".mp3");
+        File wavFile = new File(musicDirectory, songName + ".wav");
+        if (wavFile.exists()) {
+            Log.d("downloadMp3FromFirebase", "File already exists, skipping download.");
+            return;
+        }
+        songRef.getFile(localFile).addOnSuccessListener(taskSnapshot -> {
+            // Local file has been created
+            convertMp3ToWav(localFile, songName);
+        }).addOnFailureListener(exception -> {
+            // Handle any errors
+        });
+    }
+    private void convertMp3ToWav(File mp3File, String songName) {
+        File musicDirectory = new File(Environment.getExternalStorageDirectory(), "Download");
+        if (!musicDirectory.exists()) {
+            musicDirectory.mkdirs();
+        }
+
+        File wavFile = new File(musicDirectory, songName + "_unsampled" + ".wav");
+        File wavFileSampled = new File(musicDirectory, songName + ".wav");
+
+        String ffmpegCmd = String.format("-i \"%s\" \"%s\"", mp3File.getAbsolutePath(), wavFile.getAbsolutePath());
+
+        FFmpegKit.executeAsync(ffmpegCmd, session -> {
+            ReturnCode returnCode = session.getReturnCode();
+            if (ReturnCode.isSuccess(returnCode)) {
+                mp3File.delete();
+                resampleAudioFile(wavFile, wavFileSampled, 44100);
+                Log.d("FFmpeg", "MP3 to WAV conversion succeeded.");
+            } else if (ReturnCode.isCancel(returnCode)) {
+                Log.d("FFmpeg", "MP3 to WAV conversion cancelled.");
+            } else {
+                Log.d("FFmpeg", "MP3 to WAV conversion failed.");
+            }
+        });
+    }
+
+    private void resampleAudioFile(File inputFile, File outputFile, int targetSampleRate) {
+        String ffmpegCmd = String.format("-i \"%s\" -ar %d -ac 2 -sample_fmt s16 \"%s\"", inputFile.getAbsolutePath(), targetSampleRate, outputFile.getAbsolutePath());
+
+        FFmpegKit.executeAsync(ffmpegCmd, session -> {
+            ReturnCode returnCode = session.getReturnCode();
+            if (ReturnCode.isSuccess(returnCode)) {
+                inputFile.delete();
+                Log.d("FFmpeg", "Resampling succeeded.");
+            } else if (ReturnCode.isCancel(returnCode)) {
+                Log.d("FFmpeg", "Resampling cancelled.");
+            } else {
+                Log.d("FFmpeg", "Resampling failed.");
+            }
+        });
+    }
+
+
+    public static String getFullSongName() {
+        return fullSongName;
+    }
+    private void requestStoragePermissions() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        }
+    }
 }

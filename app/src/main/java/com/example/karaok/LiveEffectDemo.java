@@ -34,6 +34,7 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 
+import android.os.Looper;
 import android.os.Message;
 import android.provider.Settings;
 
@@ -97,7 +98,13 @@ public class LiveEffectDemo extends Activity
     private VolumeMixer volumeMixer;
     private boolean curPlaying;
     private Button endEarly;
-    String songName;
+    private String songName;
+    private File mLastFile;
+    private int mProcessing = 0;
+    private AudioTrack mAudioTrack = null;
+    private int mBufferSize = 0;
+    private int songMode;
+    Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

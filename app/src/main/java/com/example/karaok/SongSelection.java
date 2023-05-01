@@ -3,15 +3,11 @@ package com.example.karaok;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.view.View;
 import android.widget.Button;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Adapter;
-import android.widget.AdapterView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -164,9 +160,10 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
         startActivity(intent);
     }
 
-    public void switchContext(String songName) {
+    public void switchContext(String songName, int songMode) {
         Intent intent = new Intent(this, LiveEffectDemo.class);
         intent.putExtra("songName",songName);
+        intent.putExtra("songMode", songMode);
         startActivity(intent);
     }
 
@@ -195,11 +192,24 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
         RatingBar ratingBar = view.findViewById(R.id.dialog_preview_rating);
         ratingBar.setRating(song.getRating());
 
+        RadioGroup radioGroup = view.findViewById(R.id.dialog_preview_radioGroup);
+
+        final int[] mode_selection = {0}; // 0:original mode; 1:instrumental mode
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                RadioButton radioButton = view.findViewById(i);
+                mode_selection[0] = (radioButton.getId() == R.id.radioButton_inst) ? 1 : 0;
+            }
+        });
+
+
         // Set the positive button to switch to the song activity
         builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                switchContext(song.getArtist()+ "- " + song.getName() + ".mp3");
+                switchContext(song.getArtist()+ "- " + song.getName() + ".mp3", mode_selection[0]);
             }
         });
 

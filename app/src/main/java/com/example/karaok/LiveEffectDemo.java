@@ -91,12 +91,14 @@ public class LiveEffectDemo extends Activity
     private boolean curPlaying;
     private Button recordButton;
     String songName;
+    int songMode;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_liveeffect_demo);
         Bundle bundle = getIntent().getExtras();
         songName= bundle.getString("songName");
+        songMode = bundle.getInt("songMode");
         audioRecorder = new AudioRecorder();
         player = new MediaPlayer();
         volumeMixer = new VolumeMixer(player);

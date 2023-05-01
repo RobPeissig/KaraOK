@@ -1,0 +1,21 @@
+@echo off
+"C:\\Users\\robbi\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\cmake.exe" ^
+  "-HC:\\Users\\robbi\\AndroidStudioProjects\\KaraOK\\app\\src\\main\\cpp" ^
+  "-DCMAKE_SYSTEM_NAME=Android" ^
+  "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON" ^
+  "-DCMAKE_SYSTEM_VERSION=30" ^
+  "-DANDROID_PLATFORM=android-30" ^
+  "-DANDROID_ABI=arm64-v8a" ^
+  "-DCMAKE_ANDROID_ARCH_ABI=arm64-v8a" ^
+  "-DANDROID_NDK=C:\\Users\\robbi\\AppData\\Local\\Android\\Sdk\\ndk\\23.1.7779620" ^
+  "-DCMAKE_ANDROID_NDK=C:\\Users\\robbi\\AppData\\Local\\Android\\Sdk\\ndk\\23.1.7779620" ^
+  "-DCMAKE_TOOLCHAIN_FILE=C:\\Users\\robbi\\AppData\\Local\\Android\\Sdk\\ndk\\23.1.7779620\\build\\cmake\\android.toolchain.cmake" ^
+  "-DCMAKE_MAKE_PROGRAM=C:\\Users\\robbi\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe" ^
+  "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=C:\\Users\\robbi\\AndroidStudioProjects\\KaraOK\\app\\build\\intermediates\\cxx\\Debug\\494f6f1y\\obj\\arm64-v8a" ^
+  "-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=C:\\Users\\robbi\\AndroidStudioProjects\\KaraOK\\app\\build\\intermediates\\cxx\\Debug\\494f6f1y\\obj\\arm64-v8a" ^
+  "-DCMAKE_BUILD_TYPE=Debug" ^
+  "-DCMAKE_FIND_ROOT_PATH=C:\\Users\\robbi\\AndroidStudioProjects\\KaraOK\\app\\.cxx\\Debug\\494f6f1y\\prefab\\arm64-v8a\\prefab" ^
+  "-BC:\\Users\\robbi\\AndroidStudioProjects\\KaraOK\\app\\.cxx\\Debug\\494f6f1y\\arm64-v8a" ^
+  -GNinja ^
+  "-DANDROID_TOOLCHAIN=clang" ^
+  "-DANDROID_STL=c++_shared"

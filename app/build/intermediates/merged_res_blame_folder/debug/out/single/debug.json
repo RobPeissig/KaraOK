@@ -1,0 +1,186 @@
+[
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\mipmap-mdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\layout_activity_lyrics_display.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\layout\\activity_lyrics_display.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\menu_add_menu.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\menu\\add_menu.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\drawable_background.png.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\drawable\\background.png"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\layout_song_item.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\layout\\song_item.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\drawable-v24_ic_launcher_foreground.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\drawable-v24\\ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\mipmap-xxxhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\xml_data_extraction_rules.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\xml\\data_extraction_rules.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\mipmap-xhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\layout_fx_activity_main.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\layout\\fx_activity_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\mipmap-xhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\menu_toolbar_menu.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\menu\\toolbar_menu.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\layout_effect_header.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\layout\\effect_header.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\mipmap-xxxhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\drawable_ic_launcher_background.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\drawable\\ic_launcher_background.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\layout_effect_view.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\layout\\effect_view.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\mipmap-xxhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\layout_activity_register.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\layout\\activity_register.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\mipmap-anydpi-v26\\ic_launcher.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\mipmap-hdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\drawable_ic_baseline_info_24.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\drawable\\ic_baseline_info_24.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\drawable_fb.png.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\drawable\\fb.png"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\drawable_balance_seekbar.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\drawable\\balance_seekbar.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\layout_dialog_preview.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\layout\\dialog_preview.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\drawable_ic_baseline_audio_is_enabled_24.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\drawable\\ic_baseline_audio_is_enabled_24.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\drawable_twitter.png.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\drawable\\twitter.png"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\xml_backup_rules.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\xml\\backup_rules.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\drawable_ic_add.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\drawable\\ic_add.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\drawable_ic_baseline_audio_is_disabled_24.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\drawable\\ic_baseline_audio_is_disabled_24.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\layout_param_seek.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\layout\\param_seek.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\mipmap-anydpi-v26\\ic_launcher_round.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\mipmap-mdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\layout_activity_end_screen.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\layout\\activity_end_screen.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\drawable_google.png.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\drawable\\google.png"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\mipmap-anydpi-v33_ic_launcher.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\mipmap-anydpi-v33\\ic_launcher.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\mipmap-xxhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\drawable_ic_baseline_person_outline_24.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\drawable\\ic_baseline_person_outline_24.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\layout_activity_main.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\layout\\activity_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\raw_audio.mp3.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\raw\\audio.mp3"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\layout-v21_activity_liveeffect_demo.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\layout-v21\\activity_liveeffect_demo.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\drawable_ic_baseline_drag_indicator.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\drawable\\ic_baseline_drag_indicator.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\mipmap-hdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\drawable_song_item_background.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\drawable\\song_item_background.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\layout_activity_song_selection.xml.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\layout\\activity_song_selection.xml"
+    },
+    {
+        "merged": "com.example.karaok.app-merged_res-39:/layout-v21_activity_liveeffect_demo.xml.flat",
+        "source": "com.example.karaok.app-main-41:/layout-v21/activity_liveeffect_demo.xml"
+    },
+    {
+        "merged": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-merged_res-39:\\drawable_default_album_cover.png.flat",
+        "source": "C:\\Users\\robbi\\.gradle\\daemon\\7.5\\com.example.karaok.app-main-41:\\drawable\\default_album_cover.png"
+    }
+]

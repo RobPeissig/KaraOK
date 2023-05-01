@@ -219,16 +219,18 @@ public class LiveEffectDemo extends Activity
     @Override
     protected void onResume() {
         super.onResume();
-        LiveEffectEngine.create();
-        mAAudioRecommended = LiveEffectEngine.isAAudioRecommended();
+        //NativeInterface.INSTANCE.createAudioEngine();
+        NativeInterface.INSTANCE.enable(true);
+        //LiveEffectEngine.create();
+        //mAAudioRecommended = LiveEffectEngine.isAAudioRecommended();
         setSpinnersEnabled(true);
-        LiveEffectEngine.setAPI(apiSelection);
+        //LiveEffectEngine.setAPI(apiSelection);
         stopEffect();
     }
     @Override
     protected void onPause() {
         stopEffect();
-        LiveEffectEngine.delete();
+        NativeInterface.INSTANCE.enable(false);
         super.onPause();
     }
     public void toggleEffect() {

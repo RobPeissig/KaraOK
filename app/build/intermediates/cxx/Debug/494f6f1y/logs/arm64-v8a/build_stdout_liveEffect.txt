@@ -1,0 +1,2 @@
+ninja: Entering directory `C:\Users\robbi\AndroidStudioProjects\KaraOK\app\.cxx\Debug\494f6f1y\arm64-v8a'
+ninja: no work to do.

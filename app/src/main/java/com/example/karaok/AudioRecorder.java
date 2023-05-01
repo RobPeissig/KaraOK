@@ -61,7 +61,8 @@ public class AudioRecorder {
             @Override
             public void run() {
                 try {
-                    mixWavFiles(wavFile, songFile, mixedFile);
+                    double volumeFactor = 5;
+                    mixWavFiles(wavFile, songFile, mixedFile, volumeFactor);
                 } catch (IOException e) {
                     Log.e("AudioRecorder", "Error mixing audio files", e);
                 }
@@ -117,10 +118,9 @@ public class AudioRecorder {
     public String getCurrentTimestamp() {
         return currentTimestamp;
     }
-
-    public static Runnable mixWavFiles(File fileName1, File fileName2, File outputFileName) throws IOException {
-        String ffmpegCmd = String.format("-i \"%s\" -i \"%s\" -filter_complex \"[0:a][1:a]amix=inputs=2:duration=longest[a]\" -map \"[a]\" \"%s\"",
-                fileName1.getAbsolutePath(), fileName2.getAbsolutePath(), outputFileName.getAbsolutePath());
+    public static Runnable mixWavFiles(File fileName1, File fileName2, File outputFileName, double volumeFactor) throws IOException {
+        String ffmpegCmd = String.format("-i \"%s\" -i \"%s\" -filter_complex \"[0:a]volume=%f[a0];[a0][1:a]amix=inputs=2:duration=longest[a]\" -map \"[a]\" \"%s\"",
+                fileName1.getAbsolutePath(), fileName2.getAbsolutePath(), volumeFactor, outputFileName.getAbsolutePath());
 
         FFmpegKit.executeAsync(ffmpegCmd, session -> {
             ReturnCode returnCode = session.getReturnCode();
@@ -134,5 +134,4 @@ public class AudioRecorder {
         });
         return null;
     }
-
 }

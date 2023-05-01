@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.media.MediaPlayer;
@@ -32,6 +33,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
@@ -121,6 +123,10 @@ public class LiveEffectDemo extends Activity
 
         mHandler.postDelayed(updateSeekBarRunnable, 1000);
         timeTextView = findViewById(R.id.timeTextView);
+
+        if (songMode == 1) {
+            //initSpleeterInstrumentalPlay();
+        }
 
         seekBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -440,6 +446,9 @@ public class LiveEffectDemo extends Activity
                             mDuration = player.getDuration();
                             seekBar.setMax(1000);
                             mp.start();
+                            if (songMode == 1) {
+                                mp.setVolume(0, 0);
+                            }
                         }
                     });
                     player.prepare();
@@ -500,8 +509,54 @@ public class LiveEffectDemo extends Activity
     }
 
     // hacky way to play instrumental: mute MediaPlayer and then play from Spleeter
+    @SuppressWarnings("deprecation")
     public void initSpleeterInstrumentalPlay() {
+        player.setVolume(0, 0);
 
+        int frameRate = 44100;
+        int minBufferSize =
+                AudioTrack.getMinBufferSize(
+                        frameRate, AudioFormat.CHANNEL_OUT_STEREO, AudioFormat.ENCODING_PCM_16BIT);
+        mBufferSize = (3 * (minBufferSize / 2)) & ~3;
+        Log.e("TestEngine", "Audio minBufferSize = " + minBufferSize + " " + mBufferSize);
+        mAudioTrack =
+                new AudioTrack(
+                        AudioManager.STREAM_MUSIC,
+                        frameRate,
+                        AudioFormat.CHANNEL_OUT_STEREO,
+                        AudioFormat.ENCODING_PCM_16BIT,
+                        mBufferSize,
+                        AudioTrack.MODE_STREAM);
+
+        int ret1 = SpleeterSDK.createInstance(this).create();
+        Log.e("TestEngine", String.format("init instance ret:%d", ret1));
+
+        File f = new File(getFilesDir(), "out");
+        if (!f.exists()) {
+            f.mkdirs();
+        }
+
+        File file1 = new File(getFilesDir(), "out");
+        String[] myFiles;
+
+        myFiles = file1.list();
+        for (int i=0; i<myFiles.length; i++) {
+            File myFile = new File(file1, myFiles[i]);
+            myFile.delete();
+        }
+
+        File downloadOutputAudio = new File(getFilesDir(), "temp_audio.wav");
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int ret = SpleeterSDK.getInstance().process(downloadOutputAudio.getPath(), downloadOutputAudio.getParent() + "/out");
+                mProcessing = 0;
+                Log.e("TestEngine", String.format("start instance ret:%d", ret));
+                Log.e("TestEngine", String.format("input:%s, output%s", downloadOutputAudio.getPath(), downloadOutputAudio.getParent() + "/out"));
+            }
+        }).start();
+        new ProgressTask().execute("", "", "");
     }
 
 
@@ -511,12 +566,14 @@ public class LiveEffectDemo extends Activity
 
         @Override
         protected void onPreExecute() {
+            Log.e("TestEngine", "onPreExecute");
             super.onPreExecute();
             mAudioTrack.play();
         }
 
         @Override
         protected String doInBackground(String... strings) {
+            Log.e("TestEngine", "start background task");
             try {
                 int playSize = 0;
                 int offset = 0;
@@ -529,6 +586,7 @@ public class LiveEffectDemo extends Activity
                     stemRatio[3] = 1;
                     stemRatio[4] = 1;
 
+
                     int ret = SpleeterSDK.getInstance().playbuffer(playbuffer, offset, stemRatio);
                     if(ret == 0) {
                         break;
@@ -538,6 +596,7 @@ public class LiveEffectDemo extends Activity
                         if(playSize == 0) {
                             playSize = SpleeterSDK.getInstance().playsize();
                         }
+                        Log.e("TestEngine", String.format("return code: %d", ret));
 
                         offset += ret;
                         mAudioTrack.write(playbuffer, 0, playbuffer.length);
@@ -545,7 +604,7 @@ public class LiveEffectDemo extends Activity
 
                         int progress = SpleeterSDK.getInstance().progress();
 
-                        Log.e("Spleeter TestEngine", "write " + playbuffer.length);
+                        Log.e("TestEngine", "write " + playbuffer.length);
 
                     }
                 }

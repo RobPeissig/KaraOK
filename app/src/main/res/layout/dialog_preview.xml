@@ -35,7 +35,8 @@
     <RadioGroup
         android:id="@+id/dialog_preview_radioGroup"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:checkedButton="@id/radioButton_orginal">
 
         <RadioButton
             android:id="@+id/radioButton_orginal"

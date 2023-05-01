@@ -125,7 +125,7 @@ public class LiveEffectDemo extends Activity
         timeTextView = findViewById(R.id.timeTextView);
 
         if (songMode == 1) {
-            //initSpleeterInstrumentalPlay();
+            initSpleeterInstrumentalPlay();
         }
 
         seekBar.setOnTouchListener(new View.OnTouchListener() {

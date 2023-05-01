@@ -2,6 +2,8 @@ package com.example.karaok;
 
 import static com.example.karaok.MainActivity.TAG;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -28,20 +30,22 @@ public class FFmpegAPI {
 
         android.util.Log.d(TAG, String.format("FFmpeg process started with arguments: '%s'.", ffmpegCommand));
 
-        FFmpegKit.executeAsync(ffmpegCommand, new FFmpegSessionCompleteCallback() {
+        FFmpegSession session = FFmpegKit.execute(ffmpegCommand);
+        if (ReturnCode.isSuccess(session.getReturnCode())) {
 
-            @Override
-            public void apply(final FFmpegSession session) {
-                final SessionState state = session.getState();
-                final ReturnCode returnCode = session.getReturnCode();
+            // SUCCESS
 
-                if (ReturnCode.isSuccess(returnCode)) {
-                    android.util.Log.d(TAG, "Encode completed successfully.");
-                } else {
-                    android.util.Log.d(TAG, String.format("Encode failed with state %s and rc %s", state, returnCode));
-                }
-            }
-        });
+        } else if (ReturnCode.isCancel(session.getReturnCode())) {
+
+            // CANCEL
+
+        } else {
+
+            // FAILURE
+            Log.d(TAG, String.format("Command failed with state %s and rc %s.%s", session.getState(), session.getReturnCode(), session.getFailStackTrace()));
+
+        }
+
     }
 
     public static String generateAudioEncodeScript(String audioCodec, File InputFile, File OutputFile) {

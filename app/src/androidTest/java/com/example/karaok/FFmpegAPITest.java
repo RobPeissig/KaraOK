@@ -64,12 +64,12 @@ public class FFmpegAPITest {
         }
 
         FFmpegAPI.encodeAudio(testOutputAudio, testInputAudio, "soxr");
-        // wait for ffmpeg to complete, since it is async, we sleep 10 sec here
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+//        // wait for ffmpeg to complete, since it is async, we sleep 10 sec here
+//        try {
+//            Thread.sleep(10000);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
         // verify expect output file exist
         Truth.assertThat(testOutputAudio.exists()).isTrue();
 

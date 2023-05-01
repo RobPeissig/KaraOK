@@ -182,6 +182,15 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
             downRef.getFile(downloadAudio).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+
+                    // converting to wav
+                    File downloadOutputAudio = new File(getFilesDir(), "temp_audio.wav");
+                    if (downloadOutputAudio.exists()) {
+                        downloadOutputAudio.delete();
+                    }
+
+                    MusicConverter.toWavConverter(downloadAudio, downloadOutputAudio);
+
                     // start with instrumental mode
                     Toast.makeText(context, "Finished", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(context, LiveEffectDemo.class);

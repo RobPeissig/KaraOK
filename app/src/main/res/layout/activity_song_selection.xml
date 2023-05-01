@@ -3,18 +3,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/fxlab"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Open Fxlab" />
-
-    <Button
-        android:id="@+id/Logout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Logout" />
-
     <TextView
         android:id="@+id/list"
         android:layout_width="match_parent"
@@ -25,11 +13,33 @@
     <SearchView
         android:id="@+id/search_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
+
+    </SearchView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/song_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/Logout"
+            android:layout_width="199dp"
+            android:layout_height="wrap_content"
+            android:text="Logout" />
+
+        <ImageView
+            android:id="@+id/fxlab"
+            style="@style/Widget.AppCompat.ActionButton"
+            android:layout_width="316dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_settings" />
+
+    </LinearLayout>
 
 </LinearLayout>

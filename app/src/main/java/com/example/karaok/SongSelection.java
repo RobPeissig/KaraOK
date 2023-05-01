@@ -1,5 +1,6 @@
 package com.example.karaok;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -22,10 +24,12 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +42,8 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
     private Button fxlabButton;
     private SearchView searchView;
 
+    private Context context;
+
     FirebaseAuth auth;
     FirebaseUser user;
     Button logout;
@@ -46,6 +52,7 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_song_selection);
+        context = this;
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
@@ -161,10 +168,42 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
     }
 
     public void switchContext(String songName, int songMode) {
-        Intent intent = new Intent(this, LiveEffectDemo.class);
-        intent.putExtra("songName",songName);
-        intent.putExtra("songMode", songMode);
-        startActivity(intent);
+
+        // file download prep for instrumental mode
+        if (songMode == 1) {
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+            StorageReference downRef = storageRef.child("SongTitles/" + songName);
+
+            File downloadAudio = new File(getFilesDir(), "temp_audio.mp3");
+            if (downloadAudio.exists()) {
+                downloadAudio.delete();
+            }
+            Toast.makeText(context, "Downloading the Selected Song and Converting", Toast.LENGTH_SHORT).show();
+            downRef.getFile(downloadAudio).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    // start with instrumental mode
+                    Toast.makeText(context, "Finished", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(context, LiveEffectDemo.class);
+                    intent.putExtra("songName",songName);
+                    intent.putExtra("songMode", songMode);
+                    startActivity(intent);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    exception.printStackTrace();
+                    // Handle any errors
+                }
+            });
+        }
+        else {
+            Intent intent = new Intent(this, LiveEffectDemo.class);
+            intent.putExtra("songName",songName);
+            intent.putExtra("songMode", songMode);
+            startActivity(intent);
+        }
+
     }
 
     public void openMainActivity() {

@@ -16,8 +16,6 @@
 
 package com.example.karaok;
 
-import static android.content.ContentValues.TAG;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
@@ -35,8 +33,10 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
+
 import android.os.Message;
 import android.provider.Settings;
+
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -57,10 +57,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.oboe.samples.audio_device.AudioDeviceSpinner;
 
+
 import org.w3c.dom.Text;
 
 import java.io.File;
 import java.lang.annotation.Native;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Scanner;
@@ -96,6 +98,7 @@ public class LiveEffectDemo extends Activity
     private boolean curPlaying;
     private Button endEarly;
     String songName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

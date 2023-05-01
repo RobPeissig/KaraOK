@@ -13,6 +13,10 @@ import android.widget.Button;
 import android.view.LayoutInflater;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.view.View;
+import android.widget.Adapter;
+import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -47,15 +51,16 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
     private SongListAdapter adapter;
     private TextView textView;
     StorageReference storageRef;
-    private Button fxlabButton;
+
     public static String fullSongName;
+    private ImageView fxlabButton;
     private SearchView searchView;
 
     private Context context;
 
     FirebaseAuth auth;
     FirebaseUser user;
-    Button logout;
+    private Button logout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +71,12 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
         logout = findViewById(R.id.Logout);
-
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                logoutB();
+            }
+        });
         if (user == null) {
             openMainActivity();
             finish();
@@ -100,7 +110,10 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
             }
         });
     }
-
+    public void logoutB(){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
     public void openFxlab(){
         Intent intent = new Intent(this, FXMainActivity.class);
         startActivity(intent);

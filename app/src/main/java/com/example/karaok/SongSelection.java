@@ -1,20 +1,19 @@
 package com.example.karaok;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
+import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Adapter;
-import android.widget.AdapterView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -26,10 +25,12 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +43,8 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
     private Button fxlabButton;
     private SearchView searchView;
 
+    private Context context;
+
     FirebaseAuth auth;
     FirebaseUser user;
     Button logout;
@@ -50,6 +53,7 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_song_selection);
+        context = this;
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
@@ -164,10 +168,52 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
         startActivity(intent);
     }
 
-    public void switchContext(String songName) {
-        Intent intent = new Intent(this, LiveEffectDemo.class);
-        intent.putExtra("songName",songName);
-        startActivity(intent);
+    public void switchContext(String songName, int songMode) {
+
+        // file download prep for instrumental mode
+        if (songMode == 1) {
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+            StorageReference downRef = storageRef.child("SongTitles/" + songName);
+
+            File downloadAudio = new File(getFilesDir(), "temp_audio.mp3");
+            if (downloadAudio.exists()) {
+                downloadAudio.delete();
+            }
+            Toast.makeText(context, "Downloading the Selected Song and Converting", Toast.LENGTH_SHORT).show();
+            downRef.getFile(downloadAudio).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+
+                    // converting to wav
+                    File downloadOutputAudio = new File(getFilesDir(), "temp_audio.wav");
+                    if (downloadOutputAudio.exists()) {
+                        downloadOutputAudio.delete();
+                    }
+
+                    MusicConverter.toWavConverter(downloadAudio, downloadOutputAudio);
+
+                    // start with instrumental mode
+                    Toast.makeText(context, "Finished", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(context, LiveEffectDemo.class);
+                    intent.putExtra("songName",songName);
+                    intent.putExtra("songMode", songMode);
+                    startActivity(intent);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    exception.printStackTrace();
+                    // Handle any errors
+                }
+            });
+        }
+        else {
+            Intent intent = new Intent(this, LiveEffectDemo.class);
+            intent.putExtra("songName",songName);
+            intent.putExtra("songMode", songMode);
+            startActivity(intent);
+        }
+
     }
 
     public void openMainActivity() {
@@ -195,11 +241,24 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
         RatingBar ratingBar = view.findViewById(R.id.dialog_preview_rating);
         ratingBar.setRating(song.getRating());
 
+        RadioGroup radioGroup = view.findViewById(R.id.dialog_preview_radioGroup);
+
+        final int[] mode_selection = {0}; // 0:original mode; 1:instrumental mode
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                RadioButton radioButton = view.findViewById(i);
+                mode_selection[0] = (radioButton.getId() == R.id.radioButton_inst) ? 1 : 0;
+            }
+        });
+
+
         // Set the positive button to switch to the song activity
         builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                switchContext(song.getArtist()+ "- " + song.getName() + ".mp3");
+                switchContext(song.getArtist()+ "- " + song.getName() + ".mp3", mode_selection[0]);
             }
         });
 

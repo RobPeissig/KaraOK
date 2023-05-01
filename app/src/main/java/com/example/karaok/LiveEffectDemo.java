@@ -24,13 +24,18 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioFormat;
 import android.media.AudioManager;
+import android.media.AudioTrack;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -57,10 +62,13 @@ import com.google.oboe.samples.audio_device.AudioDeviceSpinner;
 
 import org.w3c.dom.Text;
 
+import java.io.File;
 import java.lang.annotation.Native;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Scanner;
+
+import com.ttv.spleeter.SpleeterSDK;
 
 
 public class LiveEffectDemo extends Activity
@@ -90,13 +98,19 @@ public class LiveEffectDemo extends Activity
     private VolumeMixer volumeMixer;
     private boolean curPlaying;
     private Button recordButton;
-    String songName;
+    private String songName;
+    private File mLastFile;
+    private int mProcessing = 0;
+    private AudioTrack mAudioTrack = null;
+    private int mBufferSize = 0;
+    private int songMode;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_liveeffect_demo);
         Bundle bundle = getIntent().getExtras();
         songName= bundle.getString("songName");
+        songMode = bundle.getInt("songMode");
         audioRecorder = new AudioRecorder();
         player = new MediaPlayer();
         volumeMixer = new VolumeMixer(player);
@@ -109,6 +123,10 @@ public class LiveEffectDemo extends Activity
 
         mHandler.postDelayed(updateSeekBarRunnable, 1000);
         timeTextView = findViewById(R.id.timeTextView);
+
+        if (songMode == 1) {
+            initSpleeterInstrumentalPlay();
+        }
 
         seekBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -428,6 +446,9 @@ public class LiveEffectDemo extends Activity
                             mDuration = player.getDuration();
                             seekBar.setMax(1000);
                             mp.start();
+                            if (songMode == 1) {
+                                mp.setVolume(0, 0);
+                            }
                         }
                     });
                     player.prepare();
@@ -485,5 +506,131 @@ public class LiveEffectDemo extends Activity
         Intent intent = new Intent(this, EndScreen.class);
         startActivity(intent);
 
+    }
+
+    // hacky way to play instrumental: mute MediaPlayer and then play from Spleeter
+    @SuppressWarnings("deprecation")
+    public void initSpleeterInstrumentalPlay() {
+        player.setVolume(0, 0);
+
+        int frameRate = 44100;
+        int minBufferSize =
+                AudioTrack.getMinBufferSize(
+                        frameRate, AudioFormat.CHANNEL_OUT_STEREO, AudioFormat.ENCODING_PCM_16BIT);
+        mBufferSize = (3 * (minBufferSize / 2)) & ~3;
+        Log.e("TestEngine", "Audio minBufferSize = " + minBufferSize + " " + mBufferSize);
+        mAudioTrack =
+                new AudioTrack(
+                        AudioManager.STREAM_MUSIC,
+                        frameRate,
+                        AudioFormat.CHANNEL_OUT_STEREO,
+                        AudioFormat.ENCODING_PCM_16BIT,
+                        mBufferSize,
+                        AudioTrack.MODE_STREAM);
+
+        int ret1 = SpleeterSDK.createInstance(this).create();
+        Log.e("TestEngine", String.format("init instance ret:%d", ret1));
+
+        File f = new File(getFilesDir(), "out");
+        if (!f.exists()) {
+            f.mkdirs();
+        }
+
+        File file1 = new File(getFilesDir(), "out");
+        String[] myFiles;
+
+        myFiles = file1.list();
+        for (int i=0; i<myFiles.length; i++) {
+            File myFile = new File(file1, myFiles[i]);
+            myFile.delete();
+        }
+
+        File downloadOutputAudio = new File(getFilesDir(), "temp_audio.wav");
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int ret = SpleeterSDK.getInstance().process(downloadOutputAudio.getPath(), downloadOutputAudio.getParent() + "/out");
+                mProcessing = 0;
+                Log.e("TestEngine", String.format("start instance ret:%d", ret));
+                Log.e("TestEngine", String.format("input:%s, output%s", downloadOutputAudio.getPath(), downloadOutputAudio.getParent() + "/out"));
+            }
+        }).start();
+        new ProgressTask().execute("", "", "");
+    }
+
+
+
+    @SuppressWarnings("deprecation")
+    public class ProgressTask extends AsyncTask<String, String, String> {
+
+        @Override
+        protected void onPreExecute() {
+            Log.e("TestEngine", "onPreExecute");
+            super.onPreExecute();
+            mAudioTrack.play();
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            Log.e("TestEngine", "start background task");
+            try {
+                int playSize = 0;
+                int offset = 0;
+                while(true) {
+                    short[] playbuffer = new short[8192];
+                    float[] stemRatio = new float[5];
+                    stemRatio[0] = 0;
+                    stemRatio[1] = 1;
+                    stemRatio[2] = 1;
+                    stemRatio[3] = 1;
+                    stemRatio[4] = 1;
+
+
+                    int ret = SpleeterSDK.getInstance().playbuffer(playbuffer, offset, stemRatio);
+                    if(ret == 0) {
+                        break;
+                    } else if(ret < 0) {
+                        Thread.sleep(30);
+                    } else {
+                        if(playSize == 0) {
+                            playSize = SpleeterSDK.getInstance().playsize();
+                        }
+                        Log.e("TestEngine", String.format("return code: %d", ret));
+
+                        offset += ret;
+                        mAudioTrack.write(playbuffer, 0, playbuffer.length);
+                        Log.e("TestEngine", "write " + playbuffer.length);
+
+                        int progress = SpleeterSDK.getInstance().progress();
+
+                        Log.e("TestEngine", "write " + playbuffer.length);
+
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            mAudioTrack.stop();
+
+            float[] stemRatio = new float[5];
+            stemRatio[0] = 0;
+            stemRatio[1] = 1;
+            stemRatio[2] = 1;
+            stemRatio[3] = 1;
+            stemRatio[4] = 1;
+
+//            SpleeterSDK.getInstance().saveAllStem("/mnt/sdcard/split");
+//            SpleeterSDK.getInstance().saveOne("/mnt/sdcard/one.wav", stemRatio);
+
+        }
     }
 }

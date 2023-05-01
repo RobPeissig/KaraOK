@@ -121,7 +121,7 @@ class FXMainActivity : AppCompatActivity() {
             == PackageManager.PERMISSION_GRANTED
         ) {
             //NativeInterface.createAudioEngine()
-            NativeInterface.enable(isAudioEnabled)
+            NativeInterface.enable(false)
         }
     }
 
@@ -198,9 +198,7 @@ class FXMainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.M)
     class MyMidiReceiver(var seekBar: SeekBar) : MidiReceiver() {
-
         private val TAG: String = "MyMidiReceiver"
-
         override fun onSend(data: ByteArray?, offset: Int, count: Int, timestamp: Long) {
 
             Log.d(TAG, "Got midi message, offset " + offset + " count " + count)

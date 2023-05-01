@@ -35,6 +35,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.provider.Settings;
 import android.util.Log;
@@ -104,6 +105,7 @@ public class LiveEffectDemo extends Activity
     private AudioTrack mAudioTrack = null;
     private int mBufferSize = 0;
     private int songMode;
+    Handler handler = new Handler(Looper.getMainLooper());
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -291,7 +293,7 @@ public class LiveEffectDemo extends Activity
         success = true;
         if (success) {
             //OLD: mp.start();
-            startRecording();
+//            startRecording();
             //toggleEffectButton.setText(R.string.stop_effect);
             isPlaying = true;
             setSpinnersEnabled(false);
@@ -440,6 +442,13 @@ public class LiveEffectDemo extends Activity
                 try {
                     volumeMixer.setMusicVolume(0.5f);
                     player.setDataSource(downloadUrl.toString());
+                    Runnable startRecording = new Runnable() {
+                        @Override
+                        public void run() {
+                            startRecording();
+                        }
+                    };
+                    handler.postDelayed(startRecording, 1000);
                     player.setOnPreparedListener(new MediaPlayer.OnPreparedListener(){
                         @Override
                         public void onPrepared(MediaPlayer mp) {

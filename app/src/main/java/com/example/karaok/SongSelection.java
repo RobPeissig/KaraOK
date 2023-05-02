@@ -180,50 +180,10 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
     }
 
     public void switchContext(String songName, int songMode) {
-
-        // file download prep for instrumental mode
-        if (songMode == 1) {
-            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-            StorageReference downRef = storageRef.child("SongTitles/" + songName);
-
-            File downloadAudio = new File(getFilesDir(), "temp_audio.mp3");
-            if (downloadAudio.exists()) {
-                downloadAudio.delete();
-            }
-            Toast.makeText(context, "Downloading the Selected Song and Converting", Toast.LENGTH_SHORT).show();
-            downRef.getFile(downloadAudio).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-
-                    // converting to wav
-                    File downloadOutputAudio = new File(getFilesDir(), "temp_audio.wav");
-                    if (downloadOutputAudio.exists()) {
-                        downloadOutputAudio.delete();
-                    }
-
-                    MusicConverter.toWavConverter(downloadAudio, downloadOutputAudio);
-
-                    // start with instrumental mode
-                    Toast.makeText(context, "Finished", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(context, LiveEffectDemo.class);
-                    intent.putExtra("songName",songName);
-                    intent.putExtra("songMode", songMode);
-                    startActivity(intent);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    exception.printStackTrace();
-                    // Handle any errors
-                }
-            });
-        }
-        else {
             Intent intent = new Intent(this, LiveEffectDemo.class);
             intent.putExtra("songName",songName);
             intent.putExtra("songMode", songMode);
             startActivity(intent);
-        }
 
     }
 
@@ -269,7 +229,14 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
         builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                switchContext(song.getArtist()+ "- " + song.getName() + ".mp3", mode_selection[0]);
+                String ext;
+                if (mode_selection[0] == 1) {
+                    ext = ".wav";
+                }
+                else {
+                    ext = ".mp3";
+                }
+                switchContext(song.getArtist()+ "- " + song.getName() + ext, mode_selection[0]);
             }
         });
 

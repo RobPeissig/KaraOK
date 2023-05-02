@@ -40,39 +40,42 @@
         android:id="@+id/album_cover_image_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/song_name_text_view"  />
+        app:layout_constraintTop_toBottomOf="@+id/song_name_text_view" />
 
     <Button
         android:id="@+id/button_toggle_effect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="200dp"
         android:clickable="false"
         android:gravity="center"
         android:text="@string/start_effect"
         android:textAllCaps="false"
+        android:textSize="34sp"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/album_cover_image_view" />
+        app:layout_constraintTop_toBottomOf="@id/song_name_text_view" />
 
     <SeekBar
         android:id="@+id/seekBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:secondaryProgress="@color/teal_200"
-        android:progressTint="@color/teal_200"
-        android:thumbTint="@color/teal_200"
+        android:layout_marginTop="32dp"
         android:backgroundTint="@color/white"
         android:max="100"
         android:progress="0"
+        android:progressTint="@color/teal_200"
+        android:secondaryProgress="@color/teal_200"
+        android:thumbTint="@color/teal_200"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/album_cover_image_view"/>
+        app:layout_constraintTop_toBottomOf="@+id/album_cover_image_view" />
 
     <TextView
         android:id="@+id/timeTextView"
@@ -109,11 +112,11 @@
         app:layout_constraintTop_toBottomOf="@+id/button_toggle_effect" />
 
     <Button
-        android:id="@+id/record_button"
+        android:id="@+id/endEarly"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/start_recording"
+        android:text="@string/EndSongE"
         android:textColor="@color/white"
         android:textSize="18sp"
         app:layout_constraintHorizontal_chainStyle="packed"

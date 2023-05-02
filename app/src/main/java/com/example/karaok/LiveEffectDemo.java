@@ -35,9 +35,11 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
+
 import android.os.Looper;
 import android.os.Message;
 import android.provider.Settings;
+
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -98,7 +100,7 @@ public class LiveEffectDemo extends Activity
     private int mDuration;
     private VolumeMixer volumeMixer;
     private boolean curPlaying;
-    private Button recordButton;
+    private Button endEarly;
     private String songName;
     private File mLastFile;
     private int mProcessing = 0;
@@ -106,6 +108,7 @@ public class LiveEffectDemo extends Activity
     private int mBufferSize = 0;
     private int songMode;
     Handler handler = new Handler(Looper.getMainLooper());
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,8 +122,7 @@ public class LiveEffectDemo extends Activity
         ld1 = findViewById(R.id.ld1);
         ld2 = findViewById(R.id.ld2);
         toggleEffectButton = findViewById(R.id.button_toggle_effect);
-        recordButton = findViewById(R.id.record_button);
-
+        endEarly = findViewById(R.id.endEarly);
         seekBar = findViewById(R.id.seekBar);
 
         mHandler.postDelayed(updateSeekBarRunnable, 1000);
@@ -159,16 +161,15 @@ public class LiveEffectDemo extends Activity
             }
         });
 
-        recordButton.setOnClickListener(new View.OnClickListener() {
+
+        endEarly.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isRecording) {
-                    stopRecording();
-                } else {
-                    startRecording();
-                }
+                endScreen();
             }
         });
+        endEarly.setClickable(false);
+        endEarly.setVisibility(Button.INVISIBLE);
         new CountDownTimer(3000, 1000) {
             public void onTick(long millisUntilFinished) {
                 long time = (millisUntilFinished / 1000) + 1;
@@ -322,14 +323,12 @@ public class LiveEffectDemo extends Activity
         } else {
             audioRecorder.startRecording();
             isRecording = true;
-            recordButton.setText(R.string.stop_recording);
         }
     }
 
     private void stopRecording() {
         audioRecorder.stopRecording();
         isRecording = false;
-        recordButton.setText(R.string.start_recording);
     }
     private void setSpinnersEnabled(boolean isEnabled){
         recordingDeviceSpinner.setEnabled(isEnabled);
@@ -402,7 +401,7 @@ public class LiveEffectDemo extends Activity
                         continue;
                     }
                     String time = line.substring(1,9);
-                    long milliTime = getMilli(time);
+                    long milliTime = getMilli(time) + (long)1000;
                     String lyrics = line.substring(10);
                     Log.d(TAG, String.valueOf(milliTime));
                     Log.d(TAG, lyrics);
@@ -441,6 +440,8 @@ public class LiveEffectDemo extends Activity
             mpRef = storageRef.child("SongTitles/" + songName);
         }
 
+        endEarly.setVisibility(View.VISIBLE);
+        endEarly.setClickable(true);
         mpRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>(){
 
             @Override

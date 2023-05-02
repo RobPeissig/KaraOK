@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -61,7 +63,7 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
     FirebaseAuth auth;
     FirebaseUser user;
     private Button logout;
-
+    Handler handler = new Handler(Looper.getMainLooper());
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -168,7 +170,7 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
                                         showPreviewDialog(song, forContext[position]);
                                         fullSongName = song.getArtist() + "- " + song.getName();
                                         Log.d("Song", fullSongName);
-                                        downloadMp3FromFirebase(fullSongName);
+                                        downloadWavFromFirebase(fullSongName);
                                     }
                                 }
                             });
@@ -262,30 +264,11 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
 
         builder.create().show();
     }
-    private void downloadMp3FromFirebase(String songName) {
+    private void downloadWavFromFirebase(String songName) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
-        StorageReference songRef = storageRef.child("SongTitles/" + songName + ".mp3");
-
-        File musicDirectory = new File(Environment.getExternalStorageDirectory(), "Download");
-        if (!musicDirectory.exists()) {
-            musicDirectory.mkdirs();
-        }
-
-        File localFile = new File(musicDirectory, songName + ".mp3");
-        File wavFile = new File(musicDirectory, songName + ".wav");
-        if (wavFile.exists()) {
-            Log.d("downloadMp3FromFirebase", "File already exists, skipping download.");
-            return;
-        }
-        songRef.getFile(localFile).addOnSuccessListener(taskSnapshot -> {
-            // Local file has been created
-            convertMp3ToWav(localFile, songName);
-        }).addOnFailureListener(exception -> {
-            // Handle any errors
-        });
-    }
-    private void convertMp3ToWav(File mp3File, String songName) {
+        StorageReference songRef = storageRef.child("SongInstrumental/" + songName + ".wav");
+        Log.d("Download", songName);
         File musicDirectory = new File(Environment.getExternalStorageDirectory(), "Download");
         if (!musicDirectory.exists()) {
             musicDirectory.mkdirs();
@@ -293,20 +276,22 @@ public class SongSelection extends AppCompatActivity implements SongListAdapter.
 
         File wavFile = new File(musicDirectory, songName + "_unsampled" + ".wav");
         File wavFileSampled = new File(musicDirectory, songName + ".wav");
-
-        String ffmpegCmd = String.format("-i \"%s\" \"%s\"", mp3File.getAbsolutePath(), wavFile.getAbsolutePath());
-
-        FFmpegKit.executeAsync(ffmpegCmd, session -> {
-            ReturnCode returnCode = session.getReturnCode();
-            if (ReturnCode.isSuccess(returnCode)) {
-                mp3File.delete();
-                resampleAudioFile(wavFile, wavFileSampled, 44100);
-                Log.d("FFmpeg", "MP3 to WAV conversion succeeded.");
-            } else if (ReturnCode.isCancel(returnCode)) {
-                Log.d("FFmpeg", "MP3 to WAV conversion cancelled.");
-            } else {
-                Log.d("FFmpeg", "MP3 to WAV conversion failed.");
-            }
+        if (wavFile.exists()) {
+            Log.d("downloadWavFromFirebase", "File already exists, skipping download.");
+            return;
+        }
+        songRef.getFile(wavFile).addOnSuccessListener(taskSnapshot -> {
+            // Local file has been created
+            resampleAudioFile(wavFile, wavFileSampled, 44100);
+            Runnable deleteWavRecording = new Runnable() {
+                @Override
+                public void run() {
+                    wavFile.delete();
+                }
+            };
+            handler.postDelayed(deleteWavRecording, 20000);
+        }).addOnFailureListener(exception -> {
+            // Handle any errors
         });
     }
 

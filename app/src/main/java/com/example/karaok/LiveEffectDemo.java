@@ -433,7 +433,13 @@ public class LiveEffectDemo extends Activity
     }
     public boolean startSong(){
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-        StorageReference mpRef = storageRef.child("SongTitles/" + songName);
+        StorageReference mpRef;
+        if (songMode == 1) {
+            mpRef = storageRef.child("SongInstrumental/" + songName);
+        }
+        else {
+            mpRef = storageRef.child("SongTitles/" + songName);
+        }
 
         mpRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>(){
 
@@ -455,9 +461,6 @@ public class LiveEffectDemo extends Activity
                             mDuration = player.getDuration();
                             seekBar.setMax(1000);
                             mp.start();
-                            if (songMode == 1) {
-                                mp.setVolume(0, 0);
-                            }
                         }
                     });
                     player.prepare();

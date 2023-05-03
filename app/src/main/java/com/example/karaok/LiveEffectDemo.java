@@ -108,6 +108,7 @@ public class LiveEffectDemo extends Activity
     private int mBufferSize = 0;
     private int songMode;
     Handler handler = new Handler(Looper.getMainLooper());
+    String albumFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,7 +142,7 @@ public class LiveEffectDemo extends Activity
         // Get a reference to the ImageView
         ImageView albumCoverImageView = findViewById(R.id.album_cover_image_view);
         String[] albums = songName.split("\\.");
-        String albumFile = albums[0] + ".png";
+        albumFile = albums[0] + ".png";
         TextView songNameTextView = findViewById(R.id.song_name_text_view);
         songNameTextView.setText("Now playing: " + albums[0]);
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
@@ -517,6 +518,8 @@ public class LiveEffectDemo extends Activity
     }
     public void endScreen(){
         Intent intent = new Intent(this, EndScreen.class);
+        intent.putExtra("albumFile", albumFile);
+        intent.putExtra("currentTimeStamp", audioRecorder.getCurrentTimestamp());
         startActivity(intent);
 
     }

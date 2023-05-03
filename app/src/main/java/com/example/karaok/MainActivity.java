@@ -31,7 +31,9 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         editTextEmail = findViewById(R.id.username_log);
+        editTextEmail.setText("butt1234@gmail.com");
         editTextPassword = findViewById(R.id.password_log);
+        editTextPassword.setText("123456789");
 
         TextView registerAcc = (TextView) findViewById(R.id.registerAcc);
         TextView forgotPass = (TextView) findViewById(R.id.forgotpass);

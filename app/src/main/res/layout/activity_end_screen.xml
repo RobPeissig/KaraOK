@@ -1,20 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="@drawable/background">
+
+<TextView
+    android:id="@+id/score_textview"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Your Score:"
+    android:textSize="20sp"
+    android:textStyle="bold"
+    android:layout_marginTop="15dp"
+    android:layout_centerHorizontal="true" />
+
+<TextView
+    android:id="@+id/score_value_textview"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="85"
+    android:textSize="40sp"
+    android:textStyle="bold"
+    android:textColor="@color/teal_200"
+    android:layout_below="@+id/score_textview"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="10dp" />
+
+<RatingBar
+    android:id="@+id/rating_bar"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/score_value_textview"
+    android:layout_centerHorizontal="true"
+    android:numStars="5"
+    android:stepSize="0.1"
+    android:rating="4.5"
+    android:layout_marginTop="8dp" />
+
+<SeekBar
+    android:id="@+id/seek_bar"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".EndScreen">
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/rating_bar"
+    android:max="100"
+    android:progress="30"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"/>
 
-    <LinearLayout
+<ImageView
+    android:id="@+id/record_icon"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/record_textview"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="24dp" />
+
+<Button
+    android:id="@+id/record_textview"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Listen to Recording"
+    android:textSize="20sp"
+    android:textStyle="bold"
+    android:layout_below="@+id/seek_bar"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="8dp" />
+
+    <Button
+        android:id="@+id/returnBut"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/record_icon"
+        android:layout_marginTop="5dp"
+        android:text="Select Another Song"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/returnBut"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Return to Song Selection" />
-    </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>
